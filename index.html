@@ -85,6 +85,8 @@
   .tl-avance { height: 100%; width: 0; background: var(--arcilla); }
   .tl-reloj { position: absolute; left: 12px; bottom: 16px; color: #fff; font: 600 14px Inter, sans-serif; text-shadow: 0 1px 6px rgba(0,0,0,.7); font-variant-numeric: tabular-nums; }
   .tl-play { position: absolute; right: 12px; bottom: 16px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font: 700 13px Inter, sans-serif; cursor: pointer; }
+  #timelapse[data-cierre="si"] .tl-mapa { opacity: 0; }
+  .tl-mapa { transition: opacity .5s; }
   .tl-mapa { position: absolute; right: 12px; top: 12px; width: min(30%, 220px); aspect-ratio: 1; background: rgba(14,26,19,.72); border-radius: 12px; }
   .tl-mapa .lote { fill: rgba(255,255,255,.14); stroke: rgba(255,255,255,.35); stroke-width: .6; }
   .tl-mapa .cg { fill: rgba(228,87,61,.35); stroke: #e4573d; stroke-width: 1.2; }
@@ -280,7 +282,7 @@
     <div class="envoltura">
       <div class="etiqueta">El recorrido completo</div>
       <h2>Todo el camino, en cámara rápida</h2>
-      <p class="sub">Los vuelos del dron completos, acelerados.</p>
+      <p class="sub">Los vuelos del dron completos, acelerados y estabilizados; más lentos al llegar al proyecto.</p>
       <div class="tl-tabs" role="group" aria-label="Recorrido">
         <button type="button" data-tl="ciudad" aria-pressed="true">De la ciudad al proyecto</button>
         <button type="button" data-tl="entrada" aria-pressed="false">Por la entrada</button>
@@ -288,10 +290,10 @@
       </div>
       <div class="marco tl" id="timelapse" data-verify-unit="timelapse" data-tl="ciudad">
         <video muted playsinline preload="metadata" poster="assets/timelapse/ciudad.jpg"></video>
-        <span class="tl-vel">×6</span>
+        <span class="tl-vel">×8</span>
         <svg class="tl-mapa" viewBox="0 0 10 10" aria-hidden="true" hidden></svg>
         <div class="tl-barra"><div class="tl-avance"></div></div>
-        <span class="tl-reloj">0:00 de 3:00 reales</span>
+        <span class="tl-reloj"></span>
         <button type="button" class="tl-play" aria-label="Pausar">❚❚</button>
       </div>
     </div>
@@ -472,14 +474,23 @@
     (() => {
       const caja = document.getElementById("timelapse");
       const v = caja.querySelector("video");
-      const TL = {ciudad: {vel: 6, real: 180}, entrada: {vel: 8, real: 229}, vuelo: {vel: 7, real: 198}};
+      // tramos de velocidad de cada vídeo (scripts/timelapse_cine.py → tramos.json)
+      let TR = null;
+      fetch("assets/timelapse/tramos.json").then((r) => r.json()).then((d) => (TR = d));
+      const aReal = (k, t) => {
+        if (!TR) return null;
+        const m = TR[k];
+        if (t >= m.cierre) return {real: m.real, vel: null};
+        let tr = m.tramos[0];
+        for (const x of m.tramos) if (t >= x.video[0]) tr = x;
+        return {real: Math.min(tr.real[1], tr.real[0] + (t - tr.video[0]) * tr.vel), vel: tr.vel};
+      };
       const mapa = caja.querySelector(".tl-mapa");
       let ruta = null, dron = null;
       const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
       const poner = (k) => {
         caja.dataset.tl = k;
         v.src = `assets/timelapse/${k}.mp4`; v.poster = `assets/timelapse/${k}.jpg`;
-        caja.querySelector(".tl-vel").textContent = "×" + TL[k].vel;
         mapa.hidden = k !== "vuelo";
         document.querySelectorAll(".tl-tabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tl === k)));
         if (visto) { v.load(); v.addEventListener("canplay", () => v.play().catch(() => {}), {once: true}); }
@@ -488,12 +499,16 @@
       caja.querySelector(".tl-play").addEventListener("click", (e) => { if (v.paused) { v.play(); e.target.textContent = "❚❚"; } else { v.pause(); e.target.textContent = "▶"; } });
       v.addEventListener("ended", () => { v.currentTime = 0; v.play().catch(() => {}); });
       v.addEventListener("timeupdate", () => {
-        const T = TL[caja.dataset.tl], k = v.duration ? v.currentTime / v.duration : 0;
-        caja.querySelector(".tl-avance").style.width = (k * 100).toFixed(1) + "%";
-        caja.querySelector(".tl-reloj").textContent = `${mmss(k * T.real)} de ${mmss(T.real)} reales`;
-        if (ruta && caja.dataset.tl === "vuelo") {
-          const t = v.currentTime * T.vel;
-          let i = ruta.findIndex((q) => q[0] >= t); if (i < 0) i = ruta.length - 1;
+        const k = caja.dataset.tl, f = v.duration ? v.currentTime / v.duration : 0;
+        caja.querySelector(".tl-avance").style.width = (f * 100).toFixed(1) + "%";
+        const r = aReal(k, v.currentTime);
+        if (!r) return;
+        const vel = caja.querySelector(".tl-vel"), reloj = caja.querySelector(".tl-reloj");
+        vel.textContent = r.vel ? "×" + r.vel : "El proyecto";
+        reloj.textContent = r.vel ? `${mmss(r.real)} de ${mmss(TR[k].real)} reales` : "";
+        caja.dataset.cierre = r.vel ? "no" : "si";
+        if (ruta && k === "vuelo") {
+          let i = ruta.findIndex((q) => q[0] >= r.real); if (i < 0) i = ruta.length - 1;
           dron.setAttribute("cx", ruta[i][1]); dron.setAttribute("cy", -ruta[i][2]);
         }
       });
