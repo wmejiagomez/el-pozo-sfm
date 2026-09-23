@@ -120,7 +120,7 @@
   const matVidrio = new THREE.MeshStandardMaterial({color: "#6f8fa6", roughness: 0.2, metalness: 0.3});
   const matParqueo = new THREE.MeshStandardMaterial({color: "#6b6f6a", roughness: 1});
   const matRaya = new THREE.MeshBasicMaterial({color: "#ffffff"});
-  const lotesEjemplo = ["C12", "C20"];
+  const lotesEjemplo = [];
   for (const id of lotesEjemplo) {
     const lote = D.plano.poligonos.find((q) => q.id === id);
     if (!lote) continue;
@@ -144,20 +144,155 @@
     vitrina.position.set(x0 + fondo * 0.55 + 0.2, 7 + 2, -nc);
     ejemplos.add(vitrina);
   }
-  if (cg) {
-    const g2 = new THREE.Group();
-    const [x0, x1] = [Math.min(...cg.p.map((q) => q[0])), Math.max(...cg.p.map((q) => q[0]))];
-    const [n0, n1] = [Math.min(...cg.p.map((q) => q[1])), Math.max(...cg.p.map((q) => q[1]))];
-    const edif = new THREE.Mesh(new THREE.BoxGeometry((x1 - x0) * 0.42, 9, (n1 - n0) * 0.5), matLocal);
-    edif.position.set(x0 + (x1 - x0) * 0.32, 2.5 + 4.5, -(n0 + (n1 - n0) * 0.55));
-    edif.castShadow = edif.receiveShadow = true;
-    const par = new THREE.Mesh(new THREE.BoxGeometry((x1 - x0) * 0.4, 0.4, (n1 - n0) * 0.62), matParqueo);
-    par.position.set(x0 + (x1 - x0) * 0.74, 2.7, -(n0 + (n1 - n0) * 0.52));
-    g2.add(edif, par);
-    ejemplos.add(g2);
-  }
   ejemplos.visible = false;
   escena.add(ejemplos);
+
+  // ---- Plaza comercial unificada en el solar de 20,000 m² (ilustración de la forma:
+  // nave de supermercado de una planta con cubierta a dos aguas, fachada alta al frente,
+  // marquesina, parqueo y techo para motores). Se construye por fases con `construir(p)`.
+  const plaza = new THREE.Group();
+  const fases = [];  // {desde, hasta, fn(k)} con k de 0 a 1 dentro de la fase
+  if (cg) {
+    const [a, b, c] = cg.p;
+    const eje = new THREE.Vector2(b[0] - a[0], b[1] - a[1]);
+    const lado2 = new THREE.Vector2(c[0] - b[0], c[1] - b[1]);
+    // eje local X = a lo largo de la carretera (el lado de 109 m)
+    const largo = eje.length() < lado2.length() ? eje : lado2;
+    const angPlaza = Math.atan2(largo.y, largo.x);
+    const cx0 = cg.p.reduce((s, q) => s + q[0], 0) / 4, cn0 = cg.p.reduce((s, q) => s + q[1], 0) / 4;
+    plaza.position.copy(P(cx0, cn0, 0));
+    plaza.rotation.y = angPlaza;
+    // que +Z local mire a la carretera (al este)
+    const zLocal = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), angPlaza);
+    if (zLocal.x < 0) plaza.rotation.y += Math.PI;
+    escena.add(plaza);
+
+    const M = (color, extra = {}) => new THREE.MeshStandardMaterial({color, roughness: 0.7, ...extra});
+    const caja = (w, h, d, mat, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; plaza.add(m); return m; };
+    const fase = (desde, hasta, fn) => fases.push({desde, hasta, fn});
+    const suave = (k) => k * k * (3 - 2 * k);
+
+    // 1. Nivelación: la losa pasa de tierra a hormigón
+    const losaP = caja(108, 0.6, 182, M("#8a6a4a"), 0, 2.6, 0);
+    const tierra = new THREE.Color("#8a6a4a"), hormigon = new THREE.Color("#b9b6ae");
+    fase(0, 0.1, (k) => { losaP.scale.y = Math.max(0.01, k); losaP.material.color.copy(tierra).lerp(hormigon, k); });
+
+    // Rejilla de la nave: X -40..40, Z -80..10 (80 × 90 m = 7,200 m²)
+    const NX = 9, NZ = 10, X0 = -40, X1 = 40, Z0 = -80, Z1 = 10, ALTO = 9, CUMBRE = 13;
+    const xs = [...Array(NX)].map((_, i) => X0 + ((X1 - X0) * i) / (NX - 1));
+    const zs = [...Array(NZ)].map((_, i) => Z0 + ((Z1 - Z0) * i) / (NZ - 1));
+    // 2. Zapatas
+    const zap = [];
+    xs.forEach((x) => zs.forEach((z) => zap.push(caja(1.6, 1, 1.6, M("#9d9a92"), x, 3.2, z))));
+    zap.forEach((m) => (m.scale.y = 0.01));
+    fase(0.1, 0.2, (k) => zap.forEach((m, i) => { const q = Math.min(1, Math.max(0, k * zap.length / 20 - i / 20)); m.scale.y = Math.max(0.01, suave(Math.min(1, q))); m.visible = q > 0.02; }));
+    // 3. Columnas de acero
+    const acero = M("#5b6b7a", {metalness: 0.5, roughness: 0.45});
+    const col = [];
+    xs.forEach((x) => zs.forEach((z) => { const m = caja(0.5, ALTO, 0.5, acero, x, 3.2 + ALTO / 2, z); m.scale.y = 0.01; m.position.y = 3.2; col.push(m); }));
+    fase(0.2, 0.36, (k) => col.forEach((m, i) => { const q = Math.min(1, Math.max(0, k * 1.6 - (i % NZ) / NZ * 0.6)); m.scale.y = Math.max(0.01, suave(q)); m.visible = q > 0.02; m.position.y = 3.2 + (ALTO * m.scale.y) / 2; }));
+    // 4. Cerchas a dos aguas (una por cada línea de columnas en X)
+    const cerchas = [];
+    xs.forEach((x) => {
+      const g = new THREE.Group();
+      const mitad = (Z1 - Z0) / 2, zc = (Z0 + Z1) / 2;
+      const ang = Math.atan2(CUMBRE - ALTO, mitad), lar = Math.hypot(mitad, CUMBRE - ALTO);
+      [-1, 1].forEach((s) => {
+        const v = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.7, lar), acero);
+        v.position.set(0, 3.2 + (ALTO + CUMBRE) / 2, zc + (s * mitad) / 2);
+        v.rotation.x = s * ang;
+        v.castShadow = true;
+        g.add(v);
+      });
+      g.position.x = x;
+      g.scale.set(1, 1, 0.001);
+      plaza.add(g);
+      cerchas.push(g);
+    });
+    fase(0.36, 0.48, (k) => cerchas.forEach((g, i) => { const q = Math.min(1, Math.max(0, k * 1.5 - i / cerchas.length * 0.5)); g.scale.z = Math.max(0.001, suave(q)); g.visible = q > 0.02; }));
+    // 5. Cubierta: paneles que se colocan de un extremo al otro
+    const techo = M("#d9dcdd", {metalness: 0.35, roughness: 0.5, side: THREE.DoubleSide});
+    const paneles = [];
+    const mitad = (Z1 - Z0) / 2, zc = (Z0 + Z1) / 2, angT = Math.atan2(CUMBRE - ALTO, mitad), larT = Math.hypot(mitad, CUMBRE - ALTO) + 1.5;
+    for (let i = 0; i < NX - 1; i++) {
+      [-1, 1].forEach((s) => {
+        const p = new THREE.Mesh(new THREE.BoxGeometry((X1 - X0) / (NX - 1) + 0.2, 0.25, larT), techo);
+        p.position.set(xs[i] + (X1 - X0) / (NX - 1) / 2, 3.2 + (ALTO + CUMBRE) / 2 + 0.6, zc + (s * mitad) / 2);
+        p.rotation.x = s * angT;
+        p.castShadow = p.receiveShadow = true;
+        p.visible = false;
+        plaza.add(p);
+        paneles.push(p);
+      });
+    }
+    fase(0.48, 0.62, (k) => paneles.forEach((p, i) => { const q = k * paneles.length - i; p.visible = q > 0; p.position.y = 3.2 + (ALTO + CUMBRE) / 2 + 0.6 + Math.max(0, 1 - q) * 18; }));
+    // 6. Cerramientos y fachada alta con marquesina
+    const muro = M("#ece8df");
+    const muros = [
+      caja(X1 - X0, ALTO, 0.4, muro, 0, 3.2 + ALTO / 2, Z0),
+      caja(0.4, ALTO, Z1 - Z0, muro, X0, 3.2 + ALTO / 2, zc),
+      caja(0.4, ALTO, Z1 - Z0, muro, X1, 3.2 + ALTO / 2, zc),
+    ];
+    const fachada = caja(X1 - X0 + 6, 15, 0.8, M("#f4f1ea"), 0, 3.2 + 7.5, Z1 + 0.6);
+    const franja = caja(X1 - X0 + 6.2, 2.2, 0.9, M("#c8322a"), 0, 3.2 + 13, Z1 + 0.7);
+    const vidrio = caja(30, 4.5, 0.9, M("#5f7f96", {metalness: 0.4, roughness: 0.15}), 0, 3.2 + 2.25, Z1 + 0.75);
+    const marquesina = caja(40, 0.6, 9, M("#e9e6df"), 0, 3.2 + 6, Z1 + 5);
+    const pilares = [-18, -6, 6, 18].map((x) => caja(0.5, 6, 0.5, acero, x, 3.2 + 3, Z1 + 9));
+    const fachadaTodo = [...muros, fachada, franja, vidrio, marquesina, ...pilares];
+    fachadaTodo.forEach((m) => { m.userData.y = m.position.y; m.userData.h = m.geometry.parameters.height; m.scale.y = 0.01; });
+    // Locales en línea al sur de la nave
+    const locales = caja(10, 6, 88, M("#efe9dc"), -48, 3.2 + 3, zc);
+    locales.userData.y = locales.position.y; locales.userData.h = 6; locales.scale.y = 0.01;
+    fachadaTodo.push(locales);
+    fase(0.62, 0.76, (k) => fachadaTodo.forEach((m, i) => { const q = Math.min(1, Math.max(0, k * 1.4 - (i / fachadaTodo.length) * 0.4)); m.scale.y = Math.max(0.01, suave(q)); m.visible = q > 0.02; m.position.y = 3.2 + (m.userData.h * m.scale.y) / 2 + (m.userData.y - 3.2 - m.userData.h / 2); }));
+    // 7. Parqueo: asfalto, rayas y techo para motores
+    const asfalto = caja(100, 0.3, 62, M("#3b3f42", {roughness: 0.95}), 0, 3.35, 57);
+    asfalto.scale.z = 0.01;
+    const rayas = [];
+    for (let fila = 0; fila < 4; fila++) {
+      for (let i = 0; i < 34; i++) {
+        const r = caja(0.2, 0.05, 5, M("#f2f2f2"), -46 + i * 2.8, 3.55, 34 + fila * 14);
+        r.visible = false;
+        rayas.push(r);
+      }
+    }
+    const techoMotos = caja(30, 0.4, 8, M("#d9dcdd", {metalness: 0.3}), 30, 3.2 + 4, 20);
+    techoMotos.visible = false;
+    fase(0.76, 0.88, (k) => { asfalto.visible = k > 0.01; asfalto.scale.z = Math.max(0.01, suave(k)); asfalto.position.z = 26 + 31 * suave(k); rayas.forEach((r, i) => (r.visible = k * rayas.length > i)); techoMotos.visible = k > 0.8; });
+    // 8. Paisajismo: árboles alrededor
+    const arbolesP = [];
+    for (let i = 0; i < 26; i++) {
+      const t = new THREE.Mesh(new THREE.ConeGeometry(3, 8, 7).translate(0, 4, 0), M("#2f6b3a"));
+      const perim = i < 13 ? [-52 + i * 8.5, 3.2, 90] : [53, 3.2, -84 + (i - 13) * 13];
+      t.position.set(...perim);
+      t.scale.setScalar(0.001);
+      t.castShadow = true;
+      plaza.add(t);
+      arbolesP.push(t);
+    }
+    fase(0.88, 1, (k) => arbolesP.forEach((t, i) => t.scale.setScalar(Math.max(0.001, suave(Math.min(1, Math.max(0, k * 2 - i / arbolesP.length)))))));
+    // Grúa torre mientras dura la obra
+    const grua = new THREE.Group();
+    const mastil = new THREE.Mesh(new THREE.BoxGeometry(2, 34, 2), M("#f3b33d"));
+    mastil.position.y = 17;
+    const pluma = new THREE.Mesh(new THREE.BoxGeometry(46, 1.4, 1.4), M("#f3b33d"));
+    pluma.position.set(12, 34, 0);
+    grua.add(mastil, pluma);
+    grua.position.set(46, 3.2, -30);
+    grua.traverse((m) => (m.castShadow = true));
+    plaza.add(grua);
+    fase(0.18, 0.78, (k) => { pluma.rotation.y = k * Math.PI * 3; });
+    fase(0, 1, (k) => { grua.visible = k > 0.15 && k < 0.8; });
+  }
+  let progresoObra = 1;
+  function construir(p) {
+    progresoObra = p;
+    for (const f of fases) {
+      const k = Math.min(1, Math.max(0, (p - f.desde) / (f.hasta - f.desde)));
+      f.fn(k);
+    }
+  }
+  construir(1);
 
   // ---- Árboles: el bosque real al oeste del terreno y los del parque
   const arbolGeo = new THREE.ConeGeometry(1, 1, 7).translate(0, 0.5, 0);
@@ -276,14 +411,13 @@
   const [cxR, cnR] = centroZona("residencial");
   etiqueta("<b>El Pozo</b>", P(0, 360, 40), [0, 2], "grande");
   const [cxG, cnG] = [cg.p.reduce((a, q) => a + q[0], 0) / cg.p.length, cg.p.reduce((a, q) => a + q[1], 0) / cg.p.length];
-  etiqueta("<b>Solar comercial</b><span>20,000 m² en la entrada</span>", P(cxG, cnG, 34), [0, 1, 3], "coral");
-  etiqueta("<b>Frente comercial</b><span>28 solares de 1,220 m²</span>", P(cxC + 8, cnC - 90, 26), [1], "coral");
-  etiqueta("Carretera Las Cejas – La Enea", P(95, -120, 6), [1]);
+  etiqueta("<b>Plaza comercial</b><span>solar de 20,000 m² · 109 × 183.5 m</span>", P(cxG, cnG, 40), [0, 1, 3], "coral");
+  etiqueta("Carretera Las Cejas – La Enea", P(110, 120, 6), [1]);
   {
     const l = D.plano.poligonos.find((q) => q.id === "C12");
     if (l) etiqueta("<b>Ejemplo</b><span>locales de 2 niveles con parqueo</span>", P(l.p.reduce((a, q) => a + q[0], 0) / l.p.length, l.p.reduce((a, q) => a + q[1], 0) / l.p.length, 24), [1]);
   }
-  etiqueta("<b>Residencial</b><span>106 solares · 342–456 m²</span>", P(cxR, cnR - 60, 22), [0, 3], "azul");
+  etiqueta("<b>Residencial</b><span>131 solares</span>", P(cxR, cnR - 60, 22), [0, 3], "azul");
   const ptCirc = D.vias.filter((v) => v.c === "circ").flatMap((v) => v.p).reduce((a, q) => (Math.hypot(q[0], q[1] - 300) < Math.hypot(a[0], a[1] - 300) ? q : a));
   etiqueta("Circunvalación", P(ptCirc[0] + 60, ptCirc[1] + 40, 10), [1, 2], "oro");
   rutas.forEach((r) => { r.etq = etiqueta(`<b>${r.d.nombre}</b><span>${r.d.min_carro} min · ${r.d.km_carro.toLocaleString("es-DO")} km</span>`, P(r.d.xy[0], r.d.xy[1], 300), [2], "destino"); });
@@ -295,7 +429,11 @@
     {pos: P(3100, -2500, 5400), mira: P(1850, 2150, 0)},
     {pos: P(-60, -470, 380), mira: P(-25, 40, 0)},
   ];
-  let cap = -1, tw = null, t0 = performance.now(), foco = -1;
+  if (cg) {
+    CAPS[1] = {pos: plaza.localToWorld(new THREE.Vector3(135, 95, 175)), mira: plaza.localToWorld(new THREE.Vector3(0, 6, -10))};
+  }
+  let cap = -1, tw = null, t0 = performance.now(), foco = -1, obraInicio = 0, captura = false;
+  const DURACION_OBRA = 14;
   const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2);
   function irA(pos, mira, ms = 2200) {
     manual = false;
@@ -304,6 +442,7 @@
   function capitulo(i) {
     if (i === cap) return;
     cap = i; foco = -1;
+    if (i === 1) { obraInicio = performance.now(); construir(0); } else construir(1);
     cont.dataset.capitulo = i;
     irA(CAPS[i].pos, CAPS[i].mira);
     lotes.forEach((m) => {
@@ -316,6 +455,19 @@
   }
   window.ElPozo3D = {
     capitulo,
+    reconstruir() { obraInicio = performance.now(); construir(0); },
+    // Captura para vídeo: fija obra, cámara y dibuja un cuadro (sin animaciones automáticas)
+    fotograma(p, a, dist, alto, girar) {
+      captura = true;
+      construir(p);
+      const c = plaza.localToWorld(new THREE.Vector3(0, 6, -10));
+      const off = new THREE.Vector3(Math.sin(a) * dist, alto, Math.cos(a) * dist).applyAxisAngle(new THREE.Vector3(0, 1, 0), plaza.rotation.y);
+      camara.position.copy(c).add(off);
+      camara.lookAt(c);
+      lotes.forEach((m) => { m.scale.y = m.userData.altura = 1; m.material.opacity = 1; });
+      renderer.render(escena, camara);
+      return true;
+    },
     enfocar(k) {
       capitulo(2);
       foco = k;
@@ -377,7 +529,9 @@
       o.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.035 * dt);
       camara.position.copy(controles.target).add(o);
     }
+    if (captura) return;
     controles.update();
+    if (cap === 1 && !quieto) construir(Math.min(1, (ahora - obraInicio) / 1000 / DURACION_OBRA));
     // crecer lotes escalonados
     lotes.forEach((m) => {
       const objetivo = Math.max(0.001, Math.min(1, (t - 0.3 - m.userData.retraso) * 1.6)) * m.userData.altura;
