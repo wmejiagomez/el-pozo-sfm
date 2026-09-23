@@ -5,578 +5,253 @@
 <style>[hidden]{display:none!important} img{max-width:100%} :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <meta charset="utf-8">
 <title>El Pozo, San Francisco de Macorís</title>
-<meta name="description" content="Vista previa esquemática del proyecto El Pozo, en San Francisco de Macorís: maqueta 3D, plano sobre el terreno, recorrido 360 y vídeos de dron.">
+<meta name="description" content="Demo de página web para el proyecto El Pozo, en San Francisco de Macorís.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bosque: #12301f;
-    --bosque-2: #1c4430;
     --arcilla: #e4573d;
-    --arcilla-2: #c2402a;
-    --arena: #efe6d2;
     --sol: #f3b33d;
-    --cielo: #4f8fe8;
     --tinta: #16211b;
-    --gris: #5d6b63;
-    --papel: #fbfaf6;
-    --linea: rgba(18, 48, 31, 0.14);
-    --radio: 18px;
+    --gris: #66736b;
+    --papel: #fafaf7;
+    --linea: #d9ddd8;
+    --hueco: #eef0ec;
+    --radio: 14px;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  html { color-scheme: light; }
-  body { margin: 0; font-family: Inter, "Segoe UI", sans-serif; color: var(--tinta); background: var(--papel); line-height: 1.55; }
-  h1, h2, h3 { font-family: "Bricolage Grotesque", Inter, sans-serif; line-height: 1.05; margin: 0; letter-spacing: -0.02em; }
+  html { scroll-behavior: smooth; color-scheme: light; }
+  body { margin: 0; font-family: Inter, "Segoe UI", sans-serif; color: var(--tinta); background: var(--papel); line-height: 1.5; }
+  h1, h2 { font-family: "Bricolage Grotesque", Inter, sans-serif; letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--arcilla-2); outline-offset: 3px; }
-  .barra :focus-visible, .portada :focus-visible, .contacto :focus-visible, .controles :focus-visible, .barra360 :focus-visible, .e360:focus-visible { outline-color: var(--sol); }
-  #comercial, #maqueta { scroll-margin-top: 72px; }
-  .envoltura { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  :focus-visible { outline: 3px solid var(--arcilla); outline-offset: 3px; }
+  .envoltura { max-width: 1120px; margin: 0 auto; padding-inline: 20px; }
 
-  /* Cabecera */
-  .barra { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: calc(14px + env(safe-area-inset-top, 0px)) 22px 14px; color: #fff; transition: background .3s; }
-  .barra.solida { background: rgba(18, 48, 31, 0.92); backdrop-filter: blur(8px); }
-  .marca { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 22px; text-decoration: none; }
-  .barra nav { display: flex; gap: 22px; font-weight: 500; font-size: 15px; }
-  .barra nav a { text-decoration: none; opacity: .85; }
-  .barra nav a:hover { opacity: 1; }
-  .boton { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer; font-size: 16px; font-family: inherit; }
-  .boton.lleno { background: var(--arcilla); color: #fff; }
-  .boton.lleno:hover { background: var(--arcilla-2); }
-  .boton.claro { background: rgba(255,255,255,0.14); color: #fff; border: 1.5px solid rgba(255,255,255,0.5); }
-  @media (max-width: 760px) { .barra nav { display: none; } }
+  header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(250,250,247,.94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--linea); }
+  header .envoltura { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 62px; }
+  .marca { font: 800 21px "Bricolage Grotesque", sans-serif; text-decoration: none; }
+  .demo { font: 600 11px Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gris); border: 1.5px dashed var(--gris); border-radius: 6px; padding: 3px 7px; margin-left: 10px; }
+  nav { display: flex; gap: 20px; font-size: 15px; font-weight: 500; }
+  nav a { text-decoration: none; color: var(--gris); }
+  nav a:hover { color: var(--tinta); }
+  @media (max-width: 760px) { nav { display: none; } }
 
-  /* Portada */
-  .portada { position: relative; min-height: min(88svh, 780px); display: flex; align-items: flex-end; color: #fff; overflow: hidden; background: var(--bosque) url(assets/hero.jpg) center/cover; }
-  .portada video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .portada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,24,16,.55) 0%, rgba(10,24,16,.05) 35%, rgba(10,24,16,.85) 100%); }
-  .portada .envoltura { position: relative; z-index: 2; padding-bottom: 72px; width: 100%; }
-  .sello { display: inline-block; background: var(--sol); color: var(--tinta); font-weight: 600; padding: 8px 16px; border-radius: 999px; font-size: 15px; }
-  .portada h1 { font-size: clamp(64px, 12vw, 150px); font-weight: 800; margin: 18px 0 8px; }
-  .portada p { font-size: clamp(18px, 2.2vw, 23px); max-width: 640px; margin: 0 0 28px; color: rgba(255,255,255,.9); }
-  .acciones { display: flex; gap: 12px; flex-wrap: wrap; }
+  .portada { position: relative; min-height: min(72svh, 620px); display: flex; align-items: flex-end; color: #fff; background: #29352e url(assets/terreno/DJI_0313.jpg) center/cover; }
+  .portada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05) 40%, rgba(0,0,0,.6)); }
+  .portada .envoltura { position: relative; z-index: 1; width: 100%; padding-bottom: 48px; }
+  .portada h1 { font-size: clamp(56px, 10vw, 112px); font-weight: 800; }
+  .portada p { font-size: clamp(17px, 2vw, 21px); margin: 8px 0 0; max-width: 560px; }
 
-  /* Cifras */
-  .cifras { background: var(--bosque); color: #fff; }
-  .cifras .envoltura { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
-  .cifra { padding: 34px 18px; border-left: 1px solid rgba(255,255,255,.12); }
-  .cifra:first-child { border-left: 0; }
-  .cifra b { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: clamp(34px, 3.4vw, 46px); font-weight: 800; white-space: nowrap; line-height: 1.1; margin-bottom: 6px; }
-  .cifra b small { font-size: .55em; font-weight: 600; margin-left: .12em; }
-  .cifra span { color: rgba(255,255,255,.78); font-size: 15px; }
-  .cifra.acento b { color: #ff7a5f; }
-  @media (max-width: 760px) { .cifras .envoltura { grid-template-columns: 1fr 1fr; padding: 0; } .cifra { padding: 24px 16px; } .cifra b { font-size: clamp(24px, 7.4vw, 30px); } .cifra span { font-size: 14px; } .cifra:nth-child(3) { border-left: 0; } .cifra:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.12); } }
+  section { padding-block: 72px; border-bottom: 1px solid var(--linea); }
+  .etiqueta { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--arcilla); margin-bottom: 8px; }
+  h2 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; }
+  .sub { color: var(--gris); font-size: 17px; margin: 10px 0 0; max-width: 60ch; }
 
-  section { padding: 96px 0; }
-  .antetitulo { color: var(--arcilla); font-weight: 600; font-size: 15px; margin-bottom: 12px; }
-  h2 { font-size: clamp(38px, 5vw, 60px); font-weight: 800; }
-  .intro { font-size: 19px; color: var(--gris); max-width: 680px; margin: 18px 0 0; }
+  .cifras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 28px; }
+  .cifra { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 22px; }
+  .cifra b { display: block; font: 800 34px "Bricolage Grotesque", sans-serif; font-variant-numeric: tabular-nums; }
+  .cifra span { color: var(--gris); font-size: 15px; }
+  @media (max-width: 700px) { .cifras { grid-template-columns: 1fr; } }
 
-  /* Plano sobre el terreno: el elemento protagonista */
-  .visor { margin-top: 40px; position: relative; border-radius: var(--radio); overflow: hidden; box-shadow: 0 30px 70px rgba(18,48,31,.25); background: #0d1a13; }
-  .visor .lienzo { position: relative; aspect-ratio: 1600 / 1066; }
-  .visor img { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .visor .capa { transition: opacity .6s ease; }
-  .visor .comercial { filter: saturate(1.8) drop-shadow(0 0 10px rgba(228,87,61,.9)); }
-  .controles { position: absolute; left: 16px; top: 16px; display: flex; gap: 8px; flex-wrap: wrap; z-index: 3; }
-  .controles.derecha { left: auto; right: 16px; }
-  .controles button { background: rgba(13,26,19,.78); color: #fff; border: 1.5px solid rgba(255,255,255,.35); padding: 10px 16px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
-  .controles button[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
-  .leyenda { display: flex; gap: 8px 22px; flex-wrap: wrap; margin-top: 18px; font-size: 15px; color: var(--gris); }
-  @media (max-width: 600px) {
-    .visor { display: flex; flex-direction: column-reverse; }
-    .controles { position: static; padding: 12px; gap: 6px; background: #0d1a13; }
-    .controles button { padding: 8px 12px; font-size: 13px; }
-  }
-  .leyenda i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 8px; vertical-align: -2px; }
+  /* Huecos: dónde iría cada contenido de la página definitiva */
+  .hueco { margin-top: 18px; border: 2px dashed #b9c1ba; border-radius: var(--radio); background: var(--hueco); padding: 26px; color: var(--gris); }
+  .hueco b { display: block; color: var(--tinta); font-size: 17px; margin-bottom: 4px; }
+  .raya { height: 10px; border-radius: 99px; background: #d8ddd7; margin-top: 10px; }
+  .raya.c { width: 55%; } .raya.m { width: 75%; }
+  .fichas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+  .ficha { border: 2px dashed #b9c1ba; border-radius: var(--radio); background: #fff; padding: 18px; }
+  .ficha .foto { height: 90px; border-radius: 10px; background: var(--hueco); display: grid; place-items: center; color: #a3aca5; font-size: 13px; }
+  .ficha b { display: block; margin-top: 12px; }
+  .ficha span { color: var(--gris); font-size: 14px; }
+  @media (max-width: 800px) { .fichas { grid-template-columns: 1fr; } }
+  .form { display: grid; gap: 10px; max-width: 460px; margin-top: 16px; }
+  .campo { height: 44px; border: 1.5px solid #c9d0ca; border-radius: 10px; background: #fff; padding: 0 14px; display: flex; align-items: center; color: #a3aca5; font-size: 15px; }
+  .boton-falso { height: 46px; border-radius: 999px; background: #c9d0ca; color: #fff; display: grid; place-items: center; font-weight: 600; max-width: 200px; }
 
-  /* Zona comercial */
-  .dos { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: start; }
-  @media (max-width: 900px) { .dos { grid-template-columns: 1fr; gap: 36px; } }
-  .ventajas { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 18px; }
-  .ventajas li { padding-left: 34px; position: relative; font-size: 17px; }
-  .ventajas li::before { content: ""; position: absolute; left: 0; top: 6px; width: 18px; height: 18px; border-radius: 50%; background: var(--arcilla); box-shadow: 0 0 0 5px rgba(228,87,61,.18); }
-  .ventajas b { display: block; font-size: 18px; }
-  .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
-  .lote { border: 1.5px solid var(--linea); background: #fff; border-radius: 12px; padding: 10px; font-size: 13px; color: var(--gris); cursor: pointer; text-align: left; font-family: inherit; }
-  .lote strong { display: block; color: var(--tinta); font-size: 16px; }
-  .lote.c { border-color: rgba(228,87,61,.45); }
-  .lote.c strong { color: var(--arcilla-2); }
-  .lote.grande { grid-column: 1 / -1; background: #fff1ee; border-color: var(--arcilla); padding: 16px 18px; font-size: 15px; }
-  .lote.grande strong { font-size: 20px; }
-  .croquis { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto 18px; }
-  .croquis text { font: 600 13px Inter, sans-serif; fill: var(--tinta); }
-  .croquis .suave { fill: var(--gris); font-weight: 500; }
-  .propuesta { margin-top: 16px; padding: 14px 18px; border-left: 4px solid var(--arcilla); background: #fff1ee; border-radius: 0 12px 12px 0; font-size: 16px; }
-  .lote[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); color: #fff; }
-  .lote[aria-pressed="true"] strong { color: #fff; }
-  .ficha { margin-top: 16px; padding: 18px 20px; border-radius: 14px; background: var(--arena); min-height: 64px; font-size: 16px; }
+  .marco { position: relative; margin-top: 26px; border-radius: var(--radio); overflow: hidden; border: 1px solid var(--linea); background: #dfe6e2; }
+  .marco .rotulo { position: absolute; z-index: 3; left: 12px; top: 12px; font: 600 12px Inter, sans-serif; background: rgba(255,255,255,.92); padding: 5px 10px; border-radius: 8px; pointer-events: none; }
+  #vista3d { height: min(70vh, 600px); }
+  #vista3d canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; }
+  .etiquetas { position: absolute; inset: 0; pointer-events: none; }
+  .etq3d { position: absolute; left: 0; top: 0; background: #fff; border-left: 4px solid; font: 600 13px Inter, sans-serif; padding: 5px 10px; border-radius: 6px; box-shadow: 0 3px 10px rgba(0,0,0,.18); white-space: nowrap; }
+  .pie-3d { position: absolute; right: 12px; bottom: 10px; font-size: 11px; color: #3c4640; background: rgba(255,255,255,.8); padding: 3px 8px; border-radius: 6px; }
 
-  /* Residencial */
-  .fondo-arena { background: var(--arena); }
-  .tarjetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
-  .tarjeta { background: #fff; border-radius: var(--radio); padding: 26px; }
-  .tarjeta b { font-family: "Bricolage Grotesque", sans-serif; font-size: 40px; display: block; color: var(--bosque); }
-  .tarjeta span { color: var(--gris); }
-  @media (max-width: 760px) { .tarjetas { grid-template-columns: 1fr; } }
-  details { margin-top: 26px; }
-  summary { cursor: pointer; font-weight: 600; color: var(--bosque); }
-  details .rejilla { margin-top: 16px; }
+  .fotos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 26px; }
+  .fotos img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radio); display: block; }
+  @media (max-width: 600px) { .fotos { grid-template-columns: 1fr; } }
+  .plano { position: relative; aspect-ratio: 2400 / 1091; }
+  .plano img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .leyenda { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font-size: 14px; color: var(--gris); }
+  .leyenda i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 
-  /* Ubicación */
-  #mapa { height: 640px; position: sticky; top: calc(90px + env(safe-area-inset-top, 0px)); border-radius: var(--radio); box-shadow: 0 20px 50px rgba(18,48,31,.18); background: #12301f; overflow: hidden; }
-  .lista li[aria-current="true"] { background: rgba(243,179,61,.14); }
-  .lista { list-style: none; margin: 0; padding: 0; }
-  .lista li { display: grid; grid-template-columns: 32px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--linea); cursor: pointer; }
-  .lista .n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; color: var(--tinta); }
-  .lista .d { font-weight: 600; white-space: nowrap; }
-  .lista small { color: var(--gris); font-weight: 400; }
-  .pin { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; display: grid; place-items: center; font: 700 13px Inter, sans-serif; color: #16211b; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
-  @media (max-width: 900px) { #mapa { position: static; height: 420px; } }
-  .nota { font-size: 13px; color: var(--gris); margin-top: 14px; }
-
-  /* Galería */
-  .galeria { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; margin-top: 36px; }
-  .galeria video, .galeria img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radio); display: block; }
-  .galeria .col { display: grid; gap: 14px; }
-  .galeria video { aspect-ratio: 16 / 9; }
-  @media (max-width: 760px) { .galeria { grid-template-columns: 1fr; } }
-
-  /* Contacto */
-  .contacto { background: var(--bosque); color: #fff; }
-  .contacto .intro { color: rgba(255,255,255,.75); }
-  form { display: grid; gap: 14px; margin-top: 30px; max-width: 560px; }
-  label { font-size: 14px; font-weight: 600; display: grid; gap: 6px; }
-  input, select, textarea { font: 16px Inter, sans-serif; padding: 14px 16px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; }
-  select option { color: var(--tinta); }
-  .aviso { font-size: 14px; color: var(--sol); min-height: 20px; }
-  footer { background: #0c1f14; color: rgba(255,255,255,.6); font-size: 13px; padding: 28px 0; }
-  footer p { margin: 4px 0; }
-
-
-  /* Maqueta 3D */
-  .historia { padding-bottom: 40px; }
-  .cabeza-historia { margin-bottom: 36px; }
-  .historia-rejilla { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); max-width: 1400px; margin: 0 auto; padding-inline: 20px; }
-  .escenario { position: sticky; top: calc(96px + env(safe-area-inset-top, 0px)); height: min(calc(100vh - 124px), 760px); border-radius: 22px; overflow: hidden; background: #dde5dd; box-shadow: 0 30px 70px rgba(18,48,31,.22); }
-  .escenario canvas { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; }
-  .etiquetas3d { position: absolute; inset: 0; pointer-events: none; }
-  .etq { position: absolute; left: 0; top: 0; transition: opacity .4s; background: rgba(255,255,255,.95); color: var(--tinta); padding: 6px 12px; border-radius: 10px; font: 600 13px Inter, sans-serif; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
-  .etq b { display: block; font-size: 14px; }
-  .etq span { color: var(--gris); font-weight: 500; font-size: 12px; }
-  .etq.grande { background: var(--bosque); color: #fff; font-family: "Bricolage Grotesque", Inter, sans-serif; font-size: 20px; }
-  .etq.coral { background: var(--arcilla); color: #fff; }
-  .etq.coral span { color: #ffe3dc; }
-  .etq.azul { background: #2f6fcf; color: #fff; }
-  .etq.azul span { color: #dbe8ff; }
-  .etq.oro { background: #f0b43c; color: #2a1d05; }
-  .etq.oro span { color: #4a3510; }
-  .etq.oro { background: var(--sol); }
-  .ficha3d { position: absolute; left: 16px; bottom: 56px; background: var(--bosque); color: #fff; padding: 12px 16px; border-radius: 12px; font-size: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
-  .ficha3d span { color: rgba(255,255,255,.75); font-size: 13px; }
-  .sin-webgl[hidden] { display: none; }
-  .sin-webgl { position: absolute; inset: 0; display: grid; place-items: center; padding: 30px; text-align: center; margin: 0; }
-  .puntos { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); display: grid; gap: 10px; }
-  .puntos button { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bosque); background: rgba(255,255,255,.85); cursor: pointer; padding: 0; }
-  .escenario[data-capitulo="0"] .puntos [data-ir="0"], .escenario[data-capitulo="1"] .puntos [data-ir="1"], .escenario[data-capitulo="2"] .puntos [data-ir="2"], .escenario[data-capitulo="3"] .puntos [data-ir="3"] { background: var(--arcilla); border-color: var(--arcilla); }
-  .pista { position: absolute; left: 16px; bottom: 14px; margin: 0; font-size: 12px; color: var(--gris); background: rgba(255,255,255,.85); padding: 5px 10px; border-radius: 99px; }
-  .pasos { padding-left: 48px; }
-  .paso { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; gap: 14px; opacity: .5; transition: opacity .5s; }
-  .paso.activo { opacity: 1; }
-  .paso h3 { font-size: clamp(28px, 3vw, 38px); font-weight: 800; text-wrap: balance; }
-  .paso p { margin: 0; font-size: 17px; color: var(--gris); max-width: 46ch; }
-  .paso .num { font-weight: 600; font-size: 14px; color: var(--arcilla); font-variant-numeric: tabular-nums; }
-  .paso .dato { color: var(--tinta); }
-  .paso .boton { align-self: flex-start; }
-  .boton.claro-oscuro { background: #fff; color: var(--tinta); border: 1.5px solid var(--linea); }
-  .lista { list-style: none; margin: 0; padding: 0; }
-  .lista li { display: grid; grid-template-columns: 30px 1fr auto; gap: 12px; align-items: center; padding: 11px 6px; border-bottom: 1px solid var(--linea); cursor: pointer; border-radius: 8px; }
-  .lista li:hover, .lista li[aria-current="true"] { background: rgba(243,179,61,.16); }
-  .lista .n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: #fff; }
-  .lista .d { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .lista small { color: var(--gris); }
-  .nota { font-size: 13px; color: var(--gris); }
-  .pestanas { display: none; }
-  @media (max-width: 900px) {
-    .historia-rejilla { grid-template-columns: 1fr; padding-inline: 16px; }
-    .escenario { position: relative; top: 0; height: 62vh; min-height: 380px; }
-    .pestanas { display: flex; gap: 6px; padding: 12px 0 4px; }
-    .pestanas button { flex: 1 1 auto; background: #fff; color: var(--tinta); border: 1.5px solid var(--linea); padding: 9px 8px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; white-space: nowrap; }
-    .pestanas button[aria-pressed="true"] { background: var(--arcilla); color: #fff; border-color: var(--arcilla); }
-    .pasos { padding-left: 0; }
-    .paso { display: none; min-height: 0; opacity: 1; padding: 14px 0 0; }
-    .paso.activo { display: flex; }
-    .puntos { display: none; }
-  }
-  .visor360 { position: relative; height: min(66vh, 580px); max-width: 1040px; margin: 32px auto 0; border-radius: var(--radio); overflow: hidden; background: #b9c9d6; box-shadow: 0 30px 70px rgba(18,48,31,.22); }
+  .visor360 { position: relative; height: min(60vh, 520px); }
   .visor360 canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; }
   .etiquetas360 { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-  .e360 { position: absolute; left: 0; top: 0; transition: opacity .3s; white-space: nowrap; font: 600 13px Inter, sans-serif; padding: 6px 12px; border-radius: 99px; background: rgba(255,255,255,.92); color: var(--tinta); box-shadow: 0 4px 14px rgba(0,0,0,.25); border: 0; }
-  .e360 span { margin-left: 6px; color: var(--gris); font-weight: 500; }
-  .e360.salto { background: var(--bosque); color: #fff; cursor: pointer; font-size: 14px; padding: 9px 16px; }
+  .e360 { position: absolute; left: 0; top: 0; white-space: nowrap; font: 600 13px Inter, sans-serif; padding: 5px 10px; border-radius: 99px; background: rgba(255,255,255,.92); color: var(--tinta); border: 0; }
+  .e360 span { margin-left: 6px; color: var(--gris); }
+  .e360.salto { background: var(--bosque); color: #fff; cursor: pointer; }
   .e360.salto span { color: var(--sol); }
   .e360.oro { background: var(--sol); }
   .e360.coral { background: var(--arcilla); color: #fff; }
-  .barra360 { position: absolute; left: 14px; top: 14px; right: 14px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; z-index: 2; pointer-events: none; }
+  .e360.destino { display: none; }
+  .barra360 { position: absolute; left: 12px; right: 12px; top: 12px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; z-index: 2; pointer-events: none; }
   .barra360 > * { pointer-events: auto; }
-  .panos { display: flex; gap: 6px; flex-wrap: wrap; }
-  .panos button, .conmutar { background: rgba(13,26,19,.78); color: #fff; border: 1.5px solid rgba(255,255,255,.4); padding: 8px 14px; border-radius: 999px; font: 600 13px Inter, sans-serif; cursor: pointer; }
-  .panos button[aria-pressed="true"], .conmutar[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
-  .mini360 { position: absolute; right: 14px; bottom: 14px; width: 92px; height: 184px; background: rgba(13,26,19,.72); border-radius: 12px; padding: 6px; z-index: 2; }
-  .mini360 svg { width: 100%; height: 100%; display: block; }
-  .brujula360 { position: absolute; right: 120px; bottom: 18px; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.9); z-index: 2; display: grid; justify-items: center; }
-  .brujula360 span { font: 800 12px Inter, sans-serif; color: var(--arcilla); margin-top: 2px; }
-  .pista360 { position: absolute; left: 14px; bottom: 14px; z-index: 2; background: rgba(255,255,255,.85); color: var(--tinta); font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 99px; }
-  .fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px auto 0; max-width: 1040px; }
-  .fotos img { width: 100%; border-radius: var(--radio); display: block; }
-  @media (max-width: 700px) { .fotos { grid-template-columns: 1fr; } .visor360 { height: 62vh; } .mini360 { width: 58px; height: 116px; } .brujula360 { right: 84px; } .pista360 { display: none; }
-    .barra360 { left: 10px; right: 10px; top: 10px; gap: 6px; } .panos { gap: 4px; } .panos button, .conmutar { padding: 7px 11px; font-size: 12px; } }
-  #residencial + #recorrido { padding-top: 0; }
-  .tesis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 36px; }
-  .tesis article { background: #fff; border-radius: var(--radio); padding: 24px; display: grid; gap: 10px; align-content: start; }
-  .tesis b { font-family: "Bricolage Grotesque", Inter, sans-serif; font-size: 22px; line-height: 1.15; }
-  .tesis p { margin: 0; color: var(--gris); font-size: 16px; }
-  @media (max-width: 1000px) { .tesis { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .tesis { grid-template-columns: 1fr; } }
-  .total { font-size: 18px; margin-top: 22px; }
-  .barras { display: grid; gap: 14px; }
-  .barra-area { display: grid; gap: 6px; }
-  .barra-area .fila { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; font-variant-numeric: tabular-nums; }
-  .barra-area .fila span:last-child { color: var(--gris); white-space: nowrap; }
-  .barra-area .pista-b { height: 14px; background: rgba(18,48,31,.08); border-radius: 99px; overflow: hidden; }
-  .barra-area .relleno { height: 100%; border-radius: 99px; transform-origin: left; }
-  .hechos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
-  .hechos li { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.85); }
-  .hechos b { display: block; color: #fff; font-size: 14px; letter-spacing: .02em; margin-bottom: 2px; color: var(--sol); }
-  .render-sec { background: #0e1a17; color: #fff; }
-  .render-sec .intro, .render-sec .nota { color: rgba(255,255,255,.72); }
-  .render-sec .vuelo { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radio); margin-top: 28px; display: block; box-shadow: 0 30px 70px rgba(0,0,0,.45); background: #000; }
-  .vistas, .fases { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
-  .vistas button, .fases button { background: rgba(255,255,255,.08); color: #fff; border: 1.5px solid rgba(255,255,255,.25); padding: 9px 16px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
-  .vistas button[aria-pressed="true"], .fases button[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
-  .comparador { position: relative; margin-top: 18px; aspect-ratio: 3 / 2; max-width: 100%; border-radius: var(--radio); overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,.45); user-select: none; }
-  .comparador img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-  .comparador .despues { position: absolute; inset: 0; clip-path: inset(0 0 0 55%); }
-  .comparador .linea { position: absolute; top: 0; bottom: 0; left: 55%; width: 3px; background: #fff; transform: translateX(-1.5px); box-shadow: 0 0 16px rgba(0,0,0,.5); pointer-events: none; }
-  .comparador .linea span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 42px; height: 42px; border-radius: 50%; background: #fff; color: var(--tinta); display: grid; place-items: center; font-weight: 700; }
-  .comparador input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
-  .comparador .marca { position: absolute; top: 14px; font: 700 14px Inter, sans-serif; padding: 6px 12px; border-radius: 99px; background: rgba(0,0,0,.55); pointer-events: none; }
-  .comparador .hoy { left: 14px; } .comparador .prop { right: 14px; background: var(--arcilla); }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .visor .capa { transition: none; } }
-  .clips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
-  .clips figure { margin: 0; }
-  .clips video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; background: #0d1a13; display: block; }
-  .clips figcaption { font-size: 14px; color: var(--gris); margin-top: 8px; }
-  .clips figcaption b { color: var(--tinta, inherit); display: block; font-size: 15px; }
-  @media (max-width: 900px) { .clips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 560px) { .clips { grid-template-columns: 1fr; } }
-  /* Vista previa: todo lo visual lleva su sello de esquema */
-  .previa { display: inline-flex; align-items: center; gap: 8px; font: 600 12px Inter, sans-serif; letter-spacing: .06em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; border: 1.5px dashed currentColor; }
-  .barra .previa { color: var(--sol); margin-left: 12px; }
-  .chip-demo { position: absolute; z-index: 4; left: 14px; top: 14px; pointer-events: none; font: 700 11px Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: rgba(13,26,19,.72); border: 1.5px dashed rgba(255,255,255,.7); padding: 6px 10px; border-radius: 8px; }
-  .chip-demo.abajo { top: auto; bottom: 14px; }
-  .chip-demo.derecha { left: auto; right: 14px; }
-  .marco-demo { outline: 2px dashed rgba(18,48,31,.28); outline-offset: 8px; }
-  .render-sec .marco-demo { outline-color: rgba(255,255,255,.28); }
-  .cuadricula { background-color: var(--papel); background-image: linear-gradient(rgba(18,48,31,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(18,48,31,.06) 1px, transparent 1px); background-size: 28px 28px; }
-  .iconos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 36px; }
-  .icono { background: #fff; border-radius: var(--radio); padding: 24px 22px; display: grid; gap: 6px; border: 1.5px dashed rgba(18,48,31,.22); }
-  .icono svg { width: 40px; height: 40px; }
-  .icono b { font-family: "Bricolage Grotesque", Inter, sans-serif; font-size: clamp(30px, 3vw, 40px); line-height: 1; color: var(--bosque); font-variant-numeric: tabular-nums; }
-  .icono span { color: var(--gris); font-size: 15px; }
-  @media (max-width: 900px) { .iconos { grid-template-columns: 1fr 1fr; } }
-  .dona { display: grid; grid-template-columns: 240px 1fr; gap: 36px; align-items: center; margin-top: 30px; }
-  .dona svg { width: 100%; height: auto; }
-  .dona svg text { font-family: "Bricolage Grotesque", Inter, sans-serif; fill: var(--tinta); }
-  @media (max-width: 700px) { .dona { grid-template-columns: 1fr; justify-items: center; } .dona svg { max-width: 220px; } .dona .barras { width: 100%; } }
-  .datos-cg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; }
-  .datos-cg div { background: #fff; border: 1.5px dashed rgba(228,87,61,.45); border-radius: 14px; padding: 16px 18px; }
-  .datos-cg b { display: block; font-family: "Bricolage Grotesque", Inter, sans-serif; font-size: 30px; color: var(--arcilla-2); line-height: 1.1; }
-  .datos-cg span { color: var(--gris); font-size: 14px; }
-  .capacidades { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 34px; }
-  .capacidades a { display: grid; gap: 4px; text-decoration: none; padding: 20px; border-radius: 16px; border: 1.5px dashed rgba(255,255,255,.35); background: rgba(255,255,255,.04); }
-  .capacidades a:hover { background: rgba(255,255,255,.1); }
-  .capacidades b { font-family: "Bricolage Grotesque", Inter, sans-serif; font-size: 22px; }
-  .capacidades span { color: rgba(255,255,255,.7); font-size: 14px; }
-  @media (max-width: 800px) { .capacidades { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 480px) { .capacidades { grid-template-columns: 1fr; } }
+  .panos { display: flex; gap: 6px; }
+  .panos button, .conmutar { background: rgba(18,48,31,.8); color: #fff; border: 0; padding: 7px 12px; border-radius: 99px; font: 600 13px Inter, sans-serif; cursor: pointer; }
+  .panos button[aria-pressed="true"], .conmutar[aria-pressed="true"] { background: var(--arcilla); }
+  .mini360 { position: absolute; right: 12px; bottom: 12px; width: 70px; height: 140px; background: rgba(18,48,31,.7); border-radius: 10px; padding: 5px; z-index: 2; }
+  .mini360 svg { width: 100%; height: 100%; }
+  .brujula360 { position: absolute; right: 92px; bottom: 14px; width: 34px; height: 34px; border-radius: 50%; background: #fff; z-index: 2; display: grid; justify-items: center; }
+  .brujula360 span { font: 800 11px Inter, sans-serif; color: var(--arcilla); }
+
+  .lista { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; max-width: 520px; }
+  .lista li { display: flex; justify-content: space-between; gap: 12px; background: #fff; border: 1px solid var(--linea); border-radius: 10px; padding: 12px 16px; }
+  .lista b { font-variant-numeric: tabular-nums; }
+  .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 800px) { .dos { grid-template-columns: 1fr; } }
+  footer { padding-block: 26px; color: var(--gris); font-size: 12px; }
+  footer p { margin: 3px 0; }
 </style>
 </head>
 <body>
 
 
-<header class="barra" id="barra">
-  <span style="display:flex;align-items:center"><a class="marca" href="#inicio">El Pozo</a><span class="previa">Vista previa</span></span>
-  <nav aria-label="Secciones">
-    <a href="#maqueta">Maqueta 3D</a>
-    <a href="#tesis">Ubicación</a>
-    <a href="#render">Así se vería</a>
-    <a href="#terreno">Plano</a>
-    <a href="#recorrido">360</a>
-    <a href="#areas">Áreas</a>
-  </nav>
-  <a class="boton lleno" href="#maqueta">Maqueta 3D</a>
+<header>
+  <div class="envoltura">
+    <span><a class="marca" href="#inicio">El Pozo</a><span class="demo">Demo</span></span>
+    <nav aria-label="Secciones">
+      <a href="#proyecto">Proyecto</a>
+      <a href="#recorrido3d">3D</a>
+      <a href="#fotos">Fotos</a>
+      <a href="#recorrido">360</a>
+      <a href="#solares">Solares</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </div>
 </header>
 
-<main>
-  <section class="portada" id="inicio" data-verify-unit="portada">
-    <video autoplay muted loop playsinline poster="assets/hero.jpg" aria-hidden="true">
-      <source src="assets/hero.mp4" type="video/mp4">
-    </video>
+<main id="inicio">
+  <section class="portada" data-verify-unit="portada">
     <div class="envoltura">
-      <span class="sello">Vista previa · esquema de lo que podemos lograr</span>
       <h1>El Pozo</h1>
-      <p>Plaza comercial y solares en San Francisco de Macorís, a menos de 300 m de la Circunvalación.</p>
-      <div class="acciones">
-        <a class="boton lleno" href="#maqueta">Ver la maqueta 3D</a>
-        <a class="boton claro" href="#render">Así se vería</a>
-      </div>
+      <p>Solares y plaza comercial en San Francisco de Macorís, a menos de 300 m de la Circunvalación.</p>
     </div>
   </section>
 
-  <div class="cifras" data-verify-unit="cifras">
+  <section id="proyecto">
     <div class="envoltura">
-      <div class="cifra"><b>145,232<small>m²</small></b><span>de terreno</span></div>
-      <div class="cifra acento"><b>21,727<small>m²</small></b><span>solar comercial en la entrada</span></div>
-      <div class="cifra"><b>26</b><span>solares mixtos de 1,220 m²</span></div>
-      <div class="cifra"><b>99</b><span>solares residenciales</span></div>
-    </div>
-  </div>
-
-  <section class="historia" id="maqueta" aria-labelledby="t-maqueta">
-    <div class="envoltura cabeza-historia">
-      <div class="antetitulo">Maqueta 3D</div>
-      <h2 id="t-maqueta">El proyecto en maqueta</h2>
-      <p class="intro">Maqueta esquemática sobre la ortofoto del terreno. Gírala y toca los solares.</p>
-    </div>
-    <div class="historia-rejilla">
-      <div class="escenario" id="escena" data-verify-unit="maqueta3d" data-state="cargando" data-capitulo="0">
-        <span class="chip-demo">Maqueta esquemática</span>
-        <div class="etiquetas3d" id="etiquetas3d" aria-hidden="true"></div>
-        <div class="ficha3d" id="ficha3d" hidden></div>
-        <p class="sin-webgl" id="sin-webgl" hidden>Tu navegador no muestra 3D. Mira el plano sobre el terreno más abajo.</p>
-        <nav class="puntos" aria-label="Capítulos de la maqueta">
-          <button type="button" data-ir="0" aria-label="El terreno"></button>
-          <button type="button" data-ir="1" aria-label="Zona comercial"></button>
-          <button type="button" data-ir="2" aria-label="Cerca de todo"></button>
-          <button type="button" data-ir="3" aria-label="Residencial"></button>
-        </nav>
-        <p class="pista">Arrastra para girar · toca un solar para ver su área</p>
+      <div class="etiqueta">El proyecto</div>
+      <h2>Qué es El Pozo</h2>
+      <div class="cifras" data-verify-unit="cifras">
+        <div class="cifra"><b>145,232 m²</b><span>de terreno</span></div>
+        <div class="cifra"><b>126</b><span>solares</span></div>
+        <div class="cifra"><b>21,727 m²</b><span>para la plaza comercial</span></div>
       </div>
-      <nav class="pestanas" aria-label="Capítulos de la maqueta">
-        <button type="button" data-tab="0" aria-pressed="true">Terreno</button>
-        <button type="button" data-tab="1" aria-pressed="false">Plaza</button>
-        <button type="button" data-tab="2" aria-pressed="false">Cercanías</button>
-        <button type="button" data-tab="3" aria-pressed="false">Residencial</button>
-      </nav>
-      <div class="pasos">
-        <article class="paso" data-cap="0">
-          <span class="num">1 de 4</span>
-          <h3>145 mil m² entre la ciudad y el campo</h3>
-          <p>Plaza en la entrada, mixtos junto a la carretera, residencial detrás.</p>
-        </article>
-        <article class="paso" data-cap="1">
-          <span class="num">2 de 4</span>
-          <h3>Una plaza de 21,727 m²</h3>
-          <p>Nave de una planta, locales y parqueo frente a la carretera. Forma orientativa.</p>
-          <button type="button" class="boton claro-oscuro" data-reconstruir>Ver la obra otra vez</button>
-        </article>
-        <article class="paso" data-cap="2">
-          <span class="num">3 de 4</span>
-          <h3>A 10 minutos del centro</h3>
-          <ul class="lista" id="lista-distancias" data-verify-unit="distancias" data-total="0"></ul>
-        </article>
-        <article class="paso" data-cap="3">
-          <span class="num">4 de 4</span>
-          <h3>99 residenciales y 26 mixtos</h3>
-          <p>Toca un solar para ver su área.</p>
-          <a class="boton lleno" href="#areas">Ver las áreas</a>
-        </article>
-      </div>
+      <div class="hueco" data-hueco="descripcion"><b>Aquí iría la descripción del proyecto</b>Qué se va a construir, para quién y en qué etapas.<div class="raya m"></div><div class="raya c"></div></div>
     </div>
   </section>
 
-  <section id="tesis" class="fondo-arena">
+  <section id="recorrido3d">
     <div class="envoltura">
-      <div class="antetitulo">Ubicación</div>
-      <h2>La ciudad crece hacia este lado</h2>
-      <div class="iconos" data-verify-unit="iconos">
-        <div class="icono"><svg viewBox="0 0 40 40" fill="none" stroke="#e4573d" stroke-width="2.4" stroke-linecap="round"><path d="M14 36 L18 4 M26 36 L22 4"/><path d="M20 30v-4 M20 20v-4 M20 10V7" stroke-dasharray="0"/></svg><b>&lt;300 m</b><span>de la Circunvalación</span></div>
-        <div class="icono"><svg viewBox="0 0 40 40" fill="none" stroke="#e4573d" stroke-width="2.4" stroke-linejoin="round"><path d="M6 10 L30 6 L34 34 L8 32 Z"/><path d="M36 4 L38 36" stroke-dasharray="3 3"/></svg><b>179.5 m</b><span>de frente a la carretera</span></div>
-        <div class="icono"><svg viewBox="0 0 40 40" fill="none" stroke="#e4573d" stroke-width="2.4" stroke-linecap="round"><circle cx="20" cy="20" r="15"/><path d="M20 11v9l6 4"/></svg><b>10 min</b><span>al Parque Duarte</span></div>
-        <div class="icono"><svg viewBox="0 0 40 40" fill="none" stroke="#e4573d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h5l4 18h18l4-12H11"/><circle cx="15" cy="32" r="2.5"/><circle cx="29" cy="32" r="2.5"/></svg><b>4 km</b><span>a Supermercados Bravo</span></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="camino">
-    <div class="envoltura">
-      <div class="antetitulo">El camino</div>
-      <h2>De la ciudad al terreno</h2>
-      <div class="clips" data-verify-unit="clips" data-total="6">
-        <figure><video src="assets/clips/pueblo_01_salida_urbana.mp4" poster="assets/clips/pueblo_01_salida_urbana.jpg" muted loop playsinline preload="none" aria-label="La ciudad"></video><figcaption><b>La ciudad</b></figcaption></figure>
-        <figure><video src="assets/clips/pueblo_03_transicion_suburbana.mp4" poster="assets/clips/pueblo_03_transicion_suburbana.jpg" muted loop playsinline preload="none" aria-label="El camino"></video><figcaption><b>El camino</b></figcaption></figure>
-        <figure><video src="assets/clips/pueblo_04_recta_las_cejas.mp4" poster="assets/clips/pueblo_04_recta_las_cejas.jpg" muted loop playsinline preload="none" aria-label="La llegada"></video><figcaption><b>La llegada</b></figcaption></figure>
-        <figure><video src="assets/clips/pueblo_07_llegada_proyecto.mp4" poster="assets/clips/pueblo_07_llegada_proyecto.jpg" muted loop playsinline preload="none" aria-label="El terreno"></video><figcaption><b>El terreno</b></figcaption></figure>
-        <figure><video src="assets/clips/pano_02_horizonte_cordillera.mp4" poster="assets/clips/pano_02_horizonte_cordillera.jpg" muted loop playsinline preload="none" aria-label="El entorno"></video><figcaption><b>El entorno</b></figcaption></figure>
-        <figure><video src="assets/clips/entrada_02_calzada_privada.mp4" poster="assets/clips/entrada_02_calzada_privada.jpg" muted loop playsinline preload="none" aria-label="El acceso"></video><figcaption><b>El acceso</b></figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <section id="render" class="render-sec">
-    <div class="envoltura">
-      <div class="antetitulo">Así se vería</div>
-      <h2>Una idea de cómo podría verse</h2>
-      <p class="intro">Arrastra la línea: hoy y la propuesta, sobre la misma foto de dron.</p>
-      <div style="position:relative" class="marco-demo"><span class="chip-demo">Vista previa ilustrativa</span><video class="vuelo" style="margin-top:0" src="assets/render/vuelo.mp4" autoplay muted loop playsinline poster="assets/render/c0314/fase_07.jpg" aria-label="Vuelo 3D alrededor de la plaza comercial terminada"></video></div>
-      <div class="vistas" role="group" aria-label="Foto de dron">
-        <button type="button" data-vista="c0313" aria-pressed="true">Desde la entrada</button>
-        <button type="button" data-vista="c0314" aria-pressed="false">Desde el noroeste</button>
-      </div>
-      <div class="comparador" id="comparador" data-verify-unit="render" data-vista="c0313" data-fase="7">
-        <img class="antes" src="assets/render/c0313/antes.jpg" alt="Foto de dron del terreno hoy, desde la entrada">
-        <div class="despues"><img src="assets/render/c0313/fase_07.jpg" alt="Render de la plaza comercial terminada sobre la misma foto"></div>
-        <div class="linea" aria-hidden="true"><span>⇆</span></div>
-        <input type="range" min="0" max="100" value="55" aria-label="Comparar hoy con la propuesta" id="deslizador">
-        <span class="marca hoy">Hoy</span><span class="marca prop">Propuesta</span>
-        <span class="chip-demo abajo">Ilustrativo</span>
-      </div>
-      <div class="fases" role="group" aria-label="Fases de la obra">
-        <button type="button" data-f="0">Nivelación</button><button type="button" data-f="1">Zapatas</button><button type="button" data-f="2">Columnas</button><button type="button" data-f="3">Cerchas</button><button type="button" data-f="4">Cubierta</button><button type="button" data-f="5">Fachada</button><button type="button" data-f="6">Parqueo</button><button type="button" data-f="7" aria-pressed="true">Terminada</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="areas" class="cuadricula">
-    <div class="envoltura">
-      <div class="antetitulo">Áreas</div>
-      <h2>Así se reparte el terreno</h2>
-      <div class="dona">
-        <svg id="dona" viewBox="0 0 240 240" role="img" aria-label="Reparto del terreno: 64 % vendible"></svg>
-        <div class="barras" data-verify-unit="areas" id="barras"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="terreno">
-    <div class="envoltura">
-      <div class="antetitulo">El terreno</div>
-      <h2>El plano sobre el terreno</h2>
-      <p class="intro">La distribución dibujada sobre la ortofoto y las fotos del dron.</p>
-      <div class="visor marco-demo" data-verify-unit="visor-plano" data-capa="comercial" data-foto="DJI_0313">
-        <div class="controles" role="group" aria-label="Capas del plano">
-          <button type="button" data-capa="foto" aria-pressed="false">Solo la foto</button>
-          <button type="button" data-capa="plano" aria-pressed="false">Plano completo</button>
-          <button type="button" data-capa="comercial" aria-pressed="true">Zona comercial</button>
-        </div>
-        <div class="controles derecha" role="group" aria-label="Foto de dron">
-          <button type="button" data-foto="orto" aria-pressed="false">Desde arriba</button>
-          <button type="button" data-foto="DJI_0313" aria-pressed="true">Desde la entrada</button>
-          <button type="button" data-foto="DJI_0315" aria-pressed="false">Desde el sur</button>
-        </div>
-        <div class="lienzo">
-          <span class="chip-demo abajo">Esquema sobre foto real</span>
-          <img class="base" src="assets/terreno/DJI_0313.jpg" alt="Foto de dron del terreno de El Pozo junto a la carretera Las Cejas–La Enea">
-          <img class="capa plano" src="assets/terreno/plano-DJI_0313.png" alt="" style="opacity:.3">
-          <img class="capa comercial" src="assets/terreno/comercial-DJI_0313.png" alt="" style="opacity:1">
+      <div class="etiqueta">Maqueta 3D</div>
+      <h2>El proyecto sobre el terreno</h2>
+      <p class="sub">Arrastra para girar.</p>
+      <div class="marco">
+        <div id="vista3d" data-verify-unit="vista3d" data-state="cargando">
+          <span class="rotulo">Maqueta de ejemplo</span>
+          <div class="etiquetas" aria-hidden="true"></div>
+          <span class="pie-3d">Plano base: © OpenStreetMap · tono: Sentinel-2 cloudless, EOX</span>
         </div>
       </div>
-      <div class="leyenda">
-        <span><i style="background:var(--arcilla)"></i>Zona comercial</span>
-        <span><i style="background:#f0b43c"></i>Mixto</span>
-        <span><i style="background:var(--cielo)"></i>Residencial</span>
+    </div>
+  </section>
+
+  <section id="fotos">
+    <div class="envoltura">
+      <div class="etiqueta">Fotos del dron</div>
+      <h2>Cómo está hoy</h2>
+      <div class="fotos">
+        <img src="assets/terreno/DJI_0313.jpg" alt="El terreno desde la entrada" loading="lazy">
+        <img src="assets/terreno/DJI_0315.jpg" alt="El terreno desde el sur" loading="lazy">
+        <img src="assets/clips/pano_02_horizonte_cordillera.jpg" alt="El entorno con la cordillera al fondo" loading="lazy">
+        <img src="assets/clips/pueblo_01_salida_urbana.jpg" alt="La ciudad, camino al proyecto" loading="lazy">
+      </div>
+      <div class="marco plano" data-verify-unit="plano">
+        <span class="rotulo">Plano sobre la ortofoto · norte a la izquierda</span>
+        <img src="assets/terreno/orto.jpg" alt="Ortofoto del terreno" loading="lazy">
+        <img src="assets/terreno/plano-orto.png" alt="" loading="lazy" style="opacity:.85">
+      </div>
+      <div class="leyenda"><span><i style="background:#e4573d"></i>Plaza comercial</span><span><i style="background:#f0b43c"></i>Mixtos</span><span><i style="background:#4f8fe8"></i>Residencial</span></div>
+    </div>
+  </section>
+
+  <section id="recorrido">
+    <div class="envoltura">
+      <div class="etiqueta">Recorrido 360</div>
+      <h2>Mira alrededor</h2>
+      <div class="marco">
+        <div class="visor360" id="visor360" data-verify-unit="visor360" data-state="cargando" data-plano="si">
+          <div class="etiquetas360"></div>
+          <div class="barra360">
+            <div class="panos" role="group" aria-label="Puntos del recorrido">
+              <button type="button" data-ir360="entrada" aria-pressed="true">Entrada</button>
+              <button type="button" data-ir360="centro" aria-pressed="false">Centro</button>
+              <button type="button" data-ir360="fondo" aria-pressed="false">Fondo</button>
+            </div>
+            <button type="button" class="conmutar" data-plano360 aria-pressed="true">Plano</button>
+          </div>
+          <div class="mini360" aria-label="Minimapa"></div>
+          <div class="brujula360" aria-hidden="true"><span>N</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="comercial" style="padding-top:0">
+  <section id="solares">
+    <div class="envoltura">
+      <div class="etiqueta">Solares</div>
+      <h2>Aquí iría la información de los solares</h2>
+      <p class="sub">Número, área, precio y disponibilidad de cada solar, con su ficha.</p>
+      <div class="fichas" data-verify-unit="fichas">
+        <div class="ficha"><div class="foto">foto o plano</div><b>Solar comercial</b><span>21,727 m² · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Solares mixtos</b><span>26 de 1,220 m² · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Solares residenciales</b><span>99 de 342 a 455 m² · precio y condiciones</span><div class="raya c"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ubicacion">
     <div class="envoltura dos">
       <div>
-        <div class="antetitulo">Zona comercial</div>
-        <h2>Un solar comercial de 21,727 m²</h2>
-        <div class="datos-cg">
-          <div><b>179.5 m</b><span>de frente a la carretera</span></div>
-          <div><b>5,600 m²</b><span>de nave, en el esquema</span></div>
-          <div><b>~100</b><span>parqueos, en el esquema</span></div>
-          <div><b>&lt;300 m</b><span>de la Circunvalación</span></div>
-        </div>
+        <div class="etiqueta">Ubicación</div>
+        <h2>Cerca de todo</h2>
+        <ul class="lista">
+          <li><span>Circunvalación</span><b>&lt;300 m</b></li>
+          <li><span>Parque Duarte</span><b>10 min</b></li>
+          <li><span>Supermercados Bravo</span><b>10 min</b></li>
+        </ul>
       </div>
+      <div class="hueco" data-hueco="mapa" style="margin-top:0;min-height:220px"><b>Aquí iría el mapa</b>Con la ruta desde la ciudad y los lugares cercanos.</div>
+    </div>
+  </section>
+
+  <section id="contacto" style="border-bottom:0">
+    <div class="envoltura dos">
       <div>
-        <svg class="croquis" viewBox="0 0 330 310" role="img" aria-label="Croquis del solar comercial: trapecio de 21,727 m², con 179.5 m de frente a la carretera al este y la calle de tierra al oeste">
-          <polygon points="262.7,-1.3999999999999986 278.7,-1.3999999999999986 254.3,309.6 238.3,309.6" fill="#d6d2c8"/>
-          <polygon points="41.6,45.7 51.6,45.7 36.3,281.3 26.299999999999997,281.3" fill="#e8dcc0"/>
-          <text x="266" y="200" text-anchor="middle" class="suave" style="font-size:11px" transform="rotate(84 266 200)">Carretera</text>
-          <text x="18.299999999999997" y="158.5" text-anchor="middle" class="suave" style="font-size:11px" transform="rotate(-86 18.299999999999997 158.5)">Calle</text>
-          <polygon points="55.6,65.7 246.7,28.6 222.3,269.6 40.3,251.3" fill="#fde3dc" stroke="#e4573d" stroke-width="3" stroke-linejoin="round"/>
-          <text x="141.2" y="149.8" text-anchor="middle" style="font-size:22px;font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800">21,727 m²</text>
-          <text x="141.2" y="171.8" text-anchor="middle" class="suave">solar comercial</text>
-          <text x="148.5" y="37.4" text-anchor="middle" class="suave" style="font-size:12px">144.2 m</text>
-          <text x="129.9" y="278.4" text-anchor="middle" class="suave" style="font-size:12px">135.5 m</text>
-          <text x="214" y="149" text-anchor="middle" class="suave" style="font-size:12px" transform="rotate(84 214 149)">179.5 m</text>
-        </svg>
-        <div class="rejilla" id="rejilla-comercial" data-verify-unit="lotes-comerciales" data-total="0" data-elegido=""></div>
-        <div class="ficha" id="ficha-comercial" aria-live="polite">Toca el solar para ver su ficha.</div>
+        <div class="etiqueta">Contacto</div>
+        <h2>Aquí iría el contacto de ventas</h2>
+        <p class="sub">Nombre de la persona, teléfono, WhatsApp y horario.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="fondo-arena" id="residencial">
-    <div class="envoltura">
-      <div class="antetitulo">Residencial</div>
-      <h2>Detrás, la parte residencial</h2>
-      <div class="tarjetas">
-        <div class="tarjeta"><b>99</b><span>solares residenciales, de 342 a 455&nbsp;m²</span></div>
-        <div class="tarjeta"><b>26</b><span>solares mixtos de 1,220&nbsp;m², comercio o vivienda</span></div>
-        <div class="tarjeta"><b>92,456 m²</b><span>vendibles en total</span></div>
-      </div>
-      <details>
-        <summary>Ver las áreas de los 26 mixtos y los 99 residenciales</summary>
-        <div class="rejilla" id="rejilla-mixta" data-verify-unit="lotes-mixtos" data-total="0"></div>
-        <div class="rejilla" id="rejilla-residencial" data-verify-unit="lotes-residenciales" data-total="0"></div>
-      </details>
-    </div>
-  </section>
-
-  <section class="fondo-arena" id="recorrido">
-    <div class="envoltura">
-      <div class="antetitulo">Recorrido 360</div>
-      <h2>Párate sobre el terreno</h2>
-      <p class="intro">Tres fotos 360 del dron con el plano en el suelo. Arrastra para mirar.</p>
-      <div class="visor360" id="visor360" data-verify-unit="visor360" data-state="cargando" data-plano="si">
-        <div class="etiquetas360"></div>
-        <div class="barra360">
-          <div class="panos" role="group" aria-label="Puntos del recorrido">
-            <button type="button" data-ir360="entrada" aria-pressed="true">Entrada</button>
-            <button type="button" data-ir360="centro" aria-pressed="false">Centro</button>
-            <button type="button" data-ir360="fondo" aria-pressed="false">Fondo</button>
-          </div>
-          <button type="button" class="conmutar" data-plano360 aria-pressed="true">Plano sobre el suelo</button>
+      <div class="hueco" data-hueco="contacto" style="margin-top:0">
+        <b>Formulario de contacto</b>
+        <div class="form" aria-hidden="true">
+          <div class="campo">Nombre</div>
+          <div class="campo">Teléfono</div>
+          <div class="campo">¿Qué solar le interesa?</div>
+          <div class="boton-falso">Enviar</div>
         </div>
-        <div class="mini360" aria-label="Minimapa del recorrido"></div>
-        <div class="brujula360" aria-hidden="true"><span>N</span></div>
-        <span class="pista360">Arrastra para mirar alrededor</span>
-      </div>
-      <div class="fotos">
-        <img src="assets/vista-ciudad.jpg" alt="Vista aérea del terreno con los campos al fondo" loading="lazy">
-        <img src="assets/vista-norte.jpg" alt="Vista aérea hacia la ciudad de San Francisco de Macorís" loading="lazy">
-      </div>
-    </div>
-  </section>
-
-  <section class="contacto" id="estado">
-    <div class="envoltura">
-      <div class="antetitulo" style="color:var(--sol)">Vista previa</div>
-      <h2>Esto es un esquema de lo que podemos lograr</h2>
-      <div class="capacidades" data-verify-unit="capacidades">
-        <a href="#maqueta"><b>Maqueta 3D</b><span>Interactiva, sobre la ortofoto</span></a>
-        <a href="#render"><b>Renders</b><span>La obra sobre fotos reales</span></a>
-        <a href="#recorrido"><b>Recorrido 360</b><span>Con el plano en el suelo</span></a>
-        <a href="#terreno"><b>Plano sobre el terreno</b><span>Ortofoto y fotos de dron</span></a>
-        <a href="#camino"><b>Vídeo 4K</b><span>De la ciudad al terreno</span></a>
-        <a href="#areas"><b>Áreas</b><span>El reparto del terreno</span></a>
       </div>
     </div>
   </section>
@@ -584,163 +259,16 @@
 
 <footer>
   <div class="envoltura">
-    <p>El Pozo · San Francisco de Macorís · Vista previa esquemática: imágenes y maqueta ilustrativas. Mapa © colaboradores de OpenStreetMap.</p>
+    <p>El Pozo · San Francisco de Macorís · Demo de página web: contenido e imágenes de ejemplo.</p>
+    <p>Plano base: © colaboradores de OpenStreetMap. Tono de fondo: Sentinel-2 cloudless (s2maps.eu, EOX IT Services GmbH; datos modificados de Copernicus Sentinel 2016).</p>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/RGBELoader.js"></script>
 <script src="datos.js"></script>
-<script src="escena3d.js"></script>
+<script src="vista3d.js"></script>
 <script src="visor360.js"></script>
-<script>
-  // Número de WhatsApp de ventas: vacío hasta que lo den. Formato: "18090000000".
-  const WHATSAPP = "";
-  const D = window.EL_POZO;
-  const fmt = (n, dec = 0) => n.toLocaleString("en-US", {minimumFractionDigits: dec, maximumFractionDigits: dec});
-
-  // Cabecera sólida al bajar
-  const barra = document.getElementById("barra");
-  const alBajar = () => barra.classList.toggle("solida", window.scrollY > 60);
-  addEventListener("scroll", alBajar, {passive: true}); alBajar();
-
-  // Visor de capas
-  const visor = document.querySelector(".visor");
-  const capas = {plano: visor.querySelector(".plano"), comercial: visor.querySelector(".comercial")};
-  const OPACIDAD = {foto: {plano: 0, comercial: 0}, plano: {plano: 0.85, comercial: 0}, comercial: {plano: 0.3, comercial: 1}};
-  visor.querySelectorAll("[data-capa]").forEach((b) => b.addEventListener("click", () => {
-    const modo = b.dataset.capa;
-    visor.querySelectorAll("[data-capa]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-    for (const k in capas) capas[k].style.opacity = OPACIDAD[modo][k];
-    visor.dataset.capa = modo;
-  }));
-  visor.querySelectorAll("[data-foto]").forEach((b) => b.addEventListener("click", () => {
-    const f = b.dataset.foto;
-    visor.querySelectorAll("[data-foto]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-    visor.querySelector(".base").src = `assets/terreno/${f}.jpg`;
-    capas.plano.src = `assets/terreno/plano-${f}.png`;
-    capas.comercial.src = `assets/terreno/comercial-${f}.png`;
-    visor.dataset.foto = f;
-  }));
-
-  // Rejillas de lotes
-  function rejilla(id, lotes, clase, ficha) {
-    const el = document.getElementById(id);
-    lotes.forEach((l) => {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "lote " + clase; b.setAttribute("aria-pressed", "false");
-      b.innerHTML = l.grande ? `<strong>Solar ${l.id}</strong>${fmt(l.m2, 2)} m² · 179.5 m de frente` : `<strong>${l.id}</strong>${fmt(l.m2, 2)} m²`;
-      if (ficha) b.addEventListener("click", () => {
-        el.querySelectorAll(".lote").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-        el.dataset.elegido = l.id;
-        ficha.innerHTML = `<strong>Solar ${l.id}</strong> · ${fmt(l.m2, 2)} m² · trapecio de 144.2 / 179.5 / 135.5 / 137.9 m, con el lado este (179.5 m) de frente a la carretera.`;
-      });
-      el.appendChild(b);
-    });
-    el.dataset.total = lotes.length;
-  }
-  rejilla("rejilla-comercial", D.lotes.comerciales, "c", document.getElementById("ficha-comercial"));
-  const cgBtn = document.querySelector("#rejilla-comercial .lote");
-  if (cgBtn) cgBtn.classList.add("grande");
-  rejilla("rejilla-mixta", D.lotes.mixtos, "c", null);
-  rejilla("rejilla-residencial", D.lotes.residenciales, "", null);
-
-  // Pasos de la maqueta: el que está a la vista manda el capítulo
-  const pasos = [...document.querySelectorAll(".paso")];
-  const verPaso = (i) => { pasos.forEach((p, k) => p.classList.toggle("activo", k === i)); if (window.ElPozo3D) window.ElPozo3D.capitulo(i); };
-  const movil = matchMedia("(max-width: 900px)");
-  const pestanas = [...document.querySelectorAll(".pestanas button")];
-  const verPasoTodo = (i) => { verPaso(i); pestanas.forEach((b, k) => b.setAttribute("aria-pressed", String(k === i))); };
-  pestanas.forEach((b) => b.addEventListener("click", () => verPasoTodo(+b.dataset.tab)));
-  const obsPasos = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !movil.matches) verPasoTodo(+e.target.dataset.cap); }), {rootMargin: "-45% 0px -45% 0px"});
-  pasos.forEach((p) => obsPasos.observe(p));
-  pasos[0].classList.add("activo");
-  document.querySelector("[data-reconstruir]").addEventListener("click", () => { if (window.ElPozo3D) window.ElPozo3D.reconstruir(); });
-  document.querySelectorAll(".puntos button").forEach((b) => b.addEventListener("click", () => pasos[+b.dataset.ir].scrollIntoView({behavior: "smooth", block: "center"})));
-
-  // Destinos con rutas reales
-  const COLORES = {super: "#2f7de1", centro: "#e0921b", servicio: "#6d8f7c"};
-  const lista = document.getElementById("lista-distancias");
-  D.rutas.destinos.forEach((d, i) => {
-    const li = document.createElement("li");
-    li.tabIndex = 0; li.setAttribute("role", "button");
-    li.innerHTML = `<span class="n" style="background:${COLORES[d.tipo]}">${i + 1}</span><span>${d.nombre}<br><small>${d.desc}</small></span><span class="d">${d.min_carro} min · ${fmt(d.km_carro, 1)} km</span>`;
-    const ir = () => {
-      lista.querySelectorAll("li").forEach((x) => x.removeAttribute("aria-current"));
-      li.setAttribute("aria-current", "true");
-      lista.dataset.elegido = d.nombre;
-      if (window.ElPozo3D) window.ElPozo3D.enfocar(i);
-    };
-    li.addEventListener("click", ir);
-    li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ir(); } });
-    lista.appendChild(li);
-  });
-  lista.dataset.total = D.rutas.destinos.length;
-
-  // Comparador del render fotorrealista
-  (() => {
-    const comp = document.getElementById("comparador");
-    if (!comp) return;
-    const antes = comp.querySelector(".antes"), despues = comp.querySelector(".despues"), img = despues.querySelector("img"), linea = comp.querySelector(".linea");
-    const mover = (v) => { despues.style.clipPath = `inset(0 0 0 ${v}%)`; linea.style.left = v + "%"; };
-    document.getElementById("deslizador").addEventListener("input", (e) => mover(+e.target.value));
-    const poner = () => {
-      const v = comp.dataset.vista, f = comp.dataset.fase;
-      antes.src = `assets/render/${v}/antes.jpg`;
-      img.src = `assets/render/${v}/fase_0${f}.jpg`;
-    };
-    document.querySelectorAll(".vistas button").forEach((b) => b.addEventListener("click", () => {
-      document.querySelectorAll(".vistas button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      comp.dataset.vista = b.dataset.vista; poner();
-    }));
-    document.querySelectorAll(".fases button").forEach((b) => b.addEventListener("click", () => {
-      document.querySelectorAll(".fases button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      comp.dataset.fase = b.dataset.f; poner();
-    }));
-  })();
-
-  // Cuadro de áreas (distribución en DXF, septiembre 2026; scripts/dxf_a_plano.py)
-  const AREAS = [
-    ["Residencial (99 solares)", 39008.9, "#5b93e6"],
-    ["Mixto (26 solares de 1,220 m²)", 31720.0, "#f0b43c"],
-    ["Comercial (1 solar)", 21726.6, "#e4573d"],
-    ["Calles, áreas verdes y otros", 52777.0, "#9aa39c"],
-  ];
-  const barras = document.getElementById("barras");
-  const maximo = Math.max(...AREAS.map((a) => a[1]));
-  AREAS.forEach(([nombre, m2, color]) => {
-    const d = document.createElement("div");
-    d.className = "barra-area";
-    d.innerHTML = `<div class="fila"><span>${nombre}</span><span>${fmt(m2, 2)} m²</span></div><div class="pista-b"><div class="relleno" style="width:${(m2 / maximo) * 100}%;background:${color}"></div></div>`;
-    barras.appendChild(d);
-  });
-  barras.dataset.total = AREAS.length;
-  // Dona del reparto: vendible (residencial + mixto + comercial) frente al resto
-  (() => {
-    const svg = document.getElementById("dona");
-    const total = AREAS.reduce((a, x) => a + x[1], 0);
-    const R0 = 100, r0 = 64, C = 120;
-    let a0 = -Math.PI / 2;
-    const arco = (a, b) => {
-      const p = (r, t) => `${(C + r * Math.cos(t)).toFixed(2)},${(C + r * Math.sin(t)).toFixed(2)}`;
-      const g = b - a > Math.PI ? 1 : 0;
-      return `M${p(R0, a)} A${R0},${R0} 0 ${g} 1 ${p(R0, b)} L${p(r0, b)} A${r0},${r0} 0 ${g} 0 ${p(r0, a)} Z`;
-    };
-    let html = "";
-    AREAS.forEach(([nombre, m2, color]) => {
-      const a1 = a0 + (m2 / total) * Math.PI * 2;
-      html += `<path d="${arco(a0 + 0.012, a1 - 0.012)}" fill="${color}"><title>${nombre}: ${fmt(m2)} m²</title></path>`;
-      a0 = a1;
-    });
-    const vend = AREAS.slice(0, 3).reduce((a, x) => a + x[1], 0);
-    html += `<text x="120" y="122" text-anchor="middle" style="font-size:40px;font-weight:800">${Math.round((vend / total) * 100)} %</text><text x="120" y="146" text-anchor="middle" style="font-size:14px;font-family:Inter,sans-serif;fill:#5d6b63">vendible</text>`;
-    svg.innerHTML = html;
-  })();
-  // Clips del camino: solo se reproducen los que están a la vista
-  const obsClips = new IntersectionObserver((es) => es.forEach((e) => { const v = e.target; if (e.isIntersecting) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); }), {threshold: 0.35});
-  document.querySelectorAll(".clips video").forEach((v) => obsClips.observe(v));
-</script>
 
 </body>
 </html>
