@@ -95,6 +95,8 @@
   .lote strong { display: block; color: var(--tinta); font-size: 16px; }
   .lote.c { border-color: rgba(228,87,61,.45); }
   .lote.c strong { color: var(--arcilla-2); }
+  .lote.grande { grid-column: span 2; background: #fff1ee; border-color: var(--arcilla); }
+  .propuesta { margin-top: 16px; padding: 14px 18px; border-left: 4px solid var(--arcilla); background: #fff1ee; border-radius: 0 12px 12px 0; font-size: 16px; }
   .lote[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); color: #fff; }
   .lote[aria-pressed="true"] strong { color: #fff; }
   .ficha { margin-top: 16px; padding: 18px 20px; border-radius: 14px; background: var(--arena); min-height: 64px; font-size: 16px; }
@@ -268,9 +270,9 @@
   <div class="cifras" data-verify-unit="cifras">
     <div class="envoltura">
       <div class="cifra"><b>129,645 m²</b><span>fase 1</span></div>
-      <div class="cifra"><b>100,622 m²</b><span>vendibles, el 78 %</span></div>
-      <div class="cifra acento"><b>45,928 m²</b><span>de zona comercial</span></div>
-      <div class="cifra"><b>142</b><span>solares: 30 comerciales y 112 residenciales</span></div>
+      <div class="cifra acento"><b>20,000 m²</b><span>solar comercial en la entrada</span></div>
+      <div class="cifra"><b>28</b><span>solares comerciales de 1,220 m² frente a la carretera</span></div>
+      <div class="cifra"><b>106</b><span>solares residenciales</span></div>
     </div>
   </div>
 
@@ -303,13 +305,13 @@
         <article class="paso" data-cap="0">
           <span class="num">1 de 4</span>
           <h3>Entre la ciudad y el campo</h3>
-          <p>130 mil m² en la carretera Las Cejas–La Enea, con el bosque detrás y la ciudad a unos minutos. Son 30 solares comerciales, 112 residenciales, una plaza, un parque y una zona de apartamentos.</p>
+          <p>130 mil m² en la carretera Las Cejas–La Enea, con el bosque detrás y la ciudad a unos minutos. En la entrada, un solar comercial de 20,000 m²; detrás, 28 solares comerciales, 106 residenciales, un parque y una escuela.</p>
         </article>
         <article class="paso" data-cap="1">
           <span class="num">2 de 4</span>
           <h3>La zona comercial da a la carretera</h3>
-          <p>Los 30 solares comerciales ocupan todo el frente del proyecto. Casi todos miden 1,220 m² y tienen calles marginales delante para entrar y salir sin frenar el tráfico. A 200 m pasa la nueva Circunvalación.</p>
-          <p class="dato"><b>45,928 m²</b> de zona comercial · <b>36,293 m²</b> en solares</p>
+          <p>En la entrada, un solar comercial de 20,000 m² donde el plano tenía la plaza y los apartamentos. Le siguen 28 solares de 1,220 m² de frente a la carretera, con calles marginales delante. A 200 m pasa la nueva Circunvalación.</p>
+          <p class="dato"><b>20,000 m²</b> en un solo solar · <b>33,853 m²</b> en los 28 solares del frente</p>
         </article>
         <article class="paso" data-cap="2">
           <span class="num">3 de 4</span>
@@ -321,7 +323,7 @@
         <article class="paso" data-cap="3">
           <span class="num">4 de 4</span>
           <h3>Detrás, la vida de barrio</h3>
-          <p>112 solares residenciales de 342 a 456 m², un parque en el centro, la plaza en la entrada y 5,782 m² para apartamentos. Toca cualquier solar en la maqueta para ver su número y su área.</p>
+          <p>106 solares residenciales de 342 a 456 m², un parque en el centro y una escuela. Toca cualquier solar en la maqueta para ver su número y su área.</p>
           <a class="boton lleno" href="#areas">Ver el cuadro de áreas</a>
         </article>
       </div>
@@ -339,7 +341,7 @@
         </article>
         <article>
           <b>Frente comercial sobre la carretera</b>
-          <p>Los 30 solares comerciales forman todo el frente a la carretera Las Cejas–La Enea, con calles marginales A y B para entrar y salir.</p>
+          <p>Un solar de 20,000 m² en la entrada y 28 solares comerciales a lo largo de la carretera Las Cejas–La Enea, con calles marginales A y B.</p>
         </article>
         <article>
           <b>El comercio ya llegó a la zona</b>
@@ -360,6 +362,7 @@
         <h2>Así se reparte la fase 1</h2>
         <p class="intro">Cifras del Plan Maestro de Zonificación, anteproyecto de junio de 2026. La zona comercial es la más grande del proyecto.</p>
         <p class="total"><b>100,622.39 m²</b> vendibles de <b>129,644.58 m²</b>, el 78 %.</p>
+        <p class="propuesta"><b>Propuesta:</b> un solar comercial de 20,000 m² en la entrada ocupa la plaza, los apartamentos y 8 solares de la primera fila (C1, C2, R01, R02, R33, R34, R73 y R74). El cuadro de la derecha es el del plano de junio de 2026.</p>
       </div>
       <div class="barras" data-verify-unit="areas" id="barras"></div>
     </div>
@@ -385,8 +388,6 @@
       <div class="leyenda">
         <span><i style="background:var(--arcilla)"></i>Zona comercial</span>
         <span><i style="background:var(--cielo)"></i>Residencial</span>
-        <span><i style="background:#f6e7a8"></i>Apartamentos</span>
-        <span><i style="background:#f7d9c4"></i>Plaza</span>
         <span><i style="background:#bfe4bf"></i>Parque y áreas verdes</span>
       </div>
     </div>
@@ -396,12 +397,12 @@
     <div class="envoltura dos">
       <div>
         <div class="antetitulo">Zona comercial</div>
-        <h2>45,928 m² de frente a la carretera</h2>
+        <h2>Un solar de 20,000 m² y 28 de 1,220 m²</h2>
         <ul class="ventajas">
-          <li><b>Frente a la carretera Las Cejas–La Enea</b>Los 30 solares comerciales dan a la vía, con calles marginales A y B delante para entrar y salir.</li>
+          <li><b>Solar comercial de 20,000 m²</b>En la entrada del proyecto, donde el plano de junio tenía la plaza y los apartamentos. Propuesta.</li>
+          <li><b>Frente a la carretera Las Cejas–La Enea</b>28 solares comerciales dan a la vía, con calles marginales A y B delante para entrar y salir.</li>
           <li><b>A 200 m de la Circunvalación</b>La vía nueva de 9,8 km que rodea la ciudad por el sur.</li>
-          <li><b>Solares grandes</b>29 de 1,220 m² y uno de 913 m² (C21). En total, 36,293 m² vendibles en la zona comercial.</li>
-          <li><b>Plaza de 5,052 m²</b>En la entrada principal del proyecto.</li>
+          <li><b>Solares del frente</b>27 de 1,220 m² y uno de 913 m² (C21): 33,853 m² en total.</li>
         </ul>
       </div>
       <div>
@@ -416,12 +417,12 @@
       <div class="antetitulo">Residencial</div>
       <h2>Detrás, la parte residencial</h2>
       <div class="tarjetas">
-        <div class="tarjeta"><b>112</b><span>solares residenciales de 342 a 456 m²</span></div>
+        <div class="tarjeta"><b>106</b><span>solares residenciales de 342 a 456 m²</span></div>
         <div class="tarjeta"><b>Parque</b><span>en el centro de la zona residencial</span></div>
-        <div class="tarjeta"><b>5,782 m²</b><span>de zona de apartamentos</span></div>
+        <div class="tarjeta"><b>615 m²</b><span>de escuela</span></div>
       </div>
       <details>
-        <summary>Ver las áreas de los 112 solares residenciales</summary>
+        <summary>Ver las áreas de los 106 solares residenciales</summary>
         <div class="rejilla" id="rejilla-residencial" data-verify-unit="lotes-residenciales" data-total="0"></div>
       </details>
     </div>
@@ -463,8 +464,8 @@
       <ul class="hechos">
         <li><b>Ubicación</b>Carretera Las Cejas–La Enea, San Francisco de Macorís</li>
         <li><b>Fase 1</b>129,644.58 m², 100,622.39 m² vendibles</li>
-        <li><b>Solares</b>30 comerciales y 112 residenciales</li>
-        <li><b>Equipamiento</b>Plaza, parque, escuela y zona de apartamentos</li>
+        <li><b>Solares</b>1 comercial de 20,000 m², 28 comerciales y 106 residenciales (propuesta)</li>
+        <li><b>Equipamiento</b>Parque y escuela</li>
       </ul>
     </div>
   </section>
@@ -522,6 +523,8 @@
     el.dataset.total = lotes.length;
   }
   rejilla("rejilla-comercial", D.lotes.comerciales, "c", document.getElementById("ficha-comercial"));
+  const cgBtn = document.querySelector("#rejilla-comercial .lote");
+  if (cgBtn) cgBtn.classList.add("grande");
   rejilla("rejilla-residencial", D.lotes.residenciales, "", null);
 
   // Pasos de la maqueta: el que está a la vista manda el capítulo

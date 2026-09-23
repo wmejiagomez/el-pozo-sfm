@@ -77,7 +77,7 @@
   escena.add(suelo);
 
   // Terreno del proyecto (arena), bajo los lotes
-  const ESQ = [[19.255364, -70.278178], [19.255364, -70.276998], [19.260986, -70.276515], [19.260834, -70.277857]].map(([a, b]) => aM(a, b));
+  const ESQ = D.plano.terreno;  // contorno del terreno a escala real (1:950)
   const forma = (pts) => { const s = new THREE.Shape(); pts.forEach(([x, n], i) => (i ? s.lineTo(x, n) : s.moveTo(x, n))); return s; };
   const losa = new THREE.Mesh(new THREE.ExtrudeGeometry(forma(ESQ), {depth: 0.6, bevelEnabled: false}).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({color: "#d9c9a6", roughness: 1}));
   losa.receiveShadow = true;
@@ -95,7 +95,7 @@
   const lotes = [];
   const bordes = new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.7});
   for (const p of D.plano.poligonos) {
-    const z = ZONA[p.zona];
+    const z = p.grande ? {color: "#c93f2a", h: 2.5} : ZONA[p.zona];
     const geo = new THREE.ExtrudeGeometry(forma(p.p), {depth: z.h, bevelEnabled: false}).rotateX(-Math.PI / 2);
     const mat = new THREE.MeshStandardMaterial({color: z.color, roughness: 0.65, transparent: true, opacity: 1});
     const m = new THREE.Mesh(geo, mat);
@@ -108,6 +108,7 @@
     lotes.push(m);
     escena.add(m);
   }
+  const cg = D.plano.poligonos.find((q) => q.grande);
   const centroZona = (zona) => {
     const ps = D.plano.poligonos.filter((p) => p.zona === zona).flatMap((p) => p.p);
     return [ps.reduce((a, q) => a + q[0], 0) / ps.length, ps.reduce((a, q) => a + q[1], 0) / ps.length];
@@ -119,7 +120,7 @@
   const matVidrio = new THREE.MeshStandardMaterial({color: "#6f8fa6", roughness: 0.2, metalness: 0.3});
   const matParqueo = new THREE.MeshStandardMaterial({color: "#6b6f6a", roughness: 1});
   const matRaya = new THREE.MeshBasicMaterial({color: "#ffffff"});
-  const lotesEjemplo = ["C4", "C12", "C20"];
+  const lotesEjemplo = ["C12", "C20"];
   for (const id of lotesEjemplo) {
     const lote = D.plano.poligonos.find((q) => q.id === id);
     if (!lote) continue;
@@ -142,6 +143,18 @@
     const vitrina = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, frente * 0.74), matVidrio);
     vitrina.position.set(x0 + fondo * 0.55 + 0.2, 7 + 2, -nc);
     ejemplos.add(vitrina);
+  }
+  if (cg) {
+    const g2 = new THREE.Group();
+    const [x0, x1] = [Math.min(...cg.p.map((q) => q[0])), Math.max(...cg.p.map((q) => q[0]))];
+    const [n0, n1] = [Math.min(...cg.p.map((q) => q[1])), Math.max(...cg.p.map((q) => q[1]))];
+    const edif = new THREE.Mesh(new THREE.BoxGeometry((x1 - x0) * 0.42, 9, (n1 - n0) * 0.5), matLocal);
+    edif.position.set(x0 + (x1 - x0) * 0.32, 2.5 + 4.5, -(n0 + (n1 - n0) * 0.55));
+    edif.castShadow = edif.receiveShadow = true;
+    const par = new THREE.Mesh(new THREE.BoxGeometry((x1 - x0) * 0.4, 0.4, (n1 - n0) * 0.62), matParqueo);
+    par.position.set(x0 + (x1 - x0) * 0.74, 2.7, -(n0 + (n1 - n0) * 0.52));
+    g2.add(edif, par);
+    ejemplos.add(g2);
   }
   ejemplos.visible = false;
   escena.add(ejemplos);
@@ -261,18 +274,16 @@
   }
   const [cxC, cnC] = centroZona("comercial");
   const [cxR, cnR] = centroZona("residencial");
-  const [cxA, cnA] = centroZona("apartamentos");
-  const [cxP, cnP] = centroZona("plaza");
   etiqueta("<b>El Pozo</b>", P(0, 360, 40), [0, 2], "grande");
-  etiqueta("<b>Zona comercial</b><span>30 solares · 1,220 m²</span>", P(cxC, cnC, 30), [0, 1], "coral");
+  const [cxG, cnG] = [cg.p.reduce((a, q) => a + q[0], 0) / cg.p.length, cg.p.reduce((a, q) => a + q[1], 0) / cg.p.length];
+  etiqueta("<b>Solar comercial</b><span>20,000 m² en la entrada</span>", P(cxG, cnG, 34), [0, 1, 3], "coral");
+  etiqueta("<b>Frente comercial</b><span>28 solares de 1,220 m²</span>", P(cxC + 8, cnC - 90, 26), [1], "coral");
   etiqueta("Carretera Las Cejas – La Enea", P(95, -120, 6), [1]);
   {
     const l = D.plano.poligonos.find((q) => q.id === "C12");
-    if (l) etiqueta("<b>Ejemplo</b><span>local de 2 niveles con parqueo</span>", P(l.p.reduce((a, q) => a + q[0], 0) / l.p.length, l.p.reduce((a, q) => a + q[1], 0) / l.p.length, 24), [1]);
+    if (l) etiqueta("<b>Ejemplo</b><span>locales de 2 niveles con parqueo</span>", P(l.p.reduce((a, q) => a + q[0], 0) / l.p.length, l.p.reduce((a, q) => a + q[1], 0) / l.p.length, 24), [1]);
   }
-  etiqueta("<b>Residencial</b><span>112 solares · 342–456 m²</span>", P(cxR, cnR, 22), [0, 3], "azul");
-  etiqueta("Apartamentos", P(cxA, cnA, 30), [3]);
-  etiqueta("Plaza · 5,052 m²", P(cxP, cnP, 14), [1, 3]);
+  etiqueta("<b>Residencial</b><span>106 solares · 342–456 m²</span>", P(cxR, cnR - 60, 22), [0, 3], "azul");
   const ptCirc = D.vias.filter((v) => v.c === "circ").flatMap((v) => v.p).reduce((a, q) => (Math.hypot(q[0], q[1] - 300) < Math.hypot(a[0], a[1] - 300) ? q : a));
   etiqueta("Circunvalación", P(ptCirc[0] + 60, ptCirc[1] + 40, 10), [1, 2], "oro");
   rutas.forEach((r) => { r.etq = etiqueta(`<b>${r.d.nombre}</b><span>${r.d.min_carro} min · ${r.d.km_carro.toLocaleString("es-DO")} km</span>`, P(r.d.xy[0], r.d.xy[1], 300), [2], "destino"); });
