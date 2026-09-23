@@ -1,17 +1,17 @@
-// Recorrido 360 por El Pozo: tres panorámicas de dron enlazadas, con el plano
-// maestro dibujado sobre el suelo, puntos para saltar de una a otra, destinos
-// reales en el horizonte y un minimapa. Posición, altura y rumbo de cada foto
-// son estimados (las fotos llegaron sin EXIF); con las originales del dron se
-// sustituyen por los metadatos (GPS, altura relativa y rumbo).
+// Recorrido 360 por El Pozo: las tres panorámicas originales del dron (DJI_0308/0310/0309,
+// 8192×4096 reducidas a 4096) enlazadas, con la distribución del DXF sobre el suelo, puntos
+// para saltar de una a otra, destinos reales en el horizonte y un minimapa. Posición y
+// altura: GPS y altura relativa del XMP. Rumbo: ajustado contra el suelo de las fotos
+// calibradas (scripts/calibrar_360_dji.py → render3d/panos_dji.json).
 (function () {
   const cont = document.getElementById("visor360");
   if (!cont || !window.THREE) return;
   const D = window.EL_POZO;
-  // rumbo0 = rumbo de brújula del centro de la foto (lon = 0). Estimado con scripts/calibrar_360.py
+  // rumbo0 = rumbo (grados desde el norte) del centro de la foto (lon = 0)
   const PANOS = [
-    {id: "entrada", nombre: "Entrada", src: "assets/pano-1.jpg", x: 0, n: 200, h: 110, rumbo0: 180},
-    {id: "centro", nombre: "Centro", src: "assets/pano-2.jpg", x: 0, n: -30, h: 110, rumbo0: 0},
-    {id: "fondo", nombre: "Fondo", src: "assets/pano-3.jpg", x: 0, n: -230, h: 110, rumbo0: 180},
+    {id: "entrada", nombre: "Entrada", src: "assets/360/entrada.jpg", x: -1.1, n: 217.0, h: 70.9, rumbo0: 186.4},
+    {id: "centro", nombre: "Centro", src: "assets/360/centro.jpg", x: -8.0, n: -10.0, h: 77.4, rumbo0: 3.05},
+    {id: "fondo", nombre: "Fondo", src: "assets/360/fondo.jpg", x: -47.7, n: -264.3, h: 76.1, rumbo0: 174.2},
   ];
   let renderer;
   try {
@@ -40,7 +40,7 @@
     const L = (Math.atan2(dx, dn) / R - pano.rumbo0) * R;
     return new THREE.Vector3(-Math.cos(L) * r, alto - pano.h, -Math.sin(L) * r).normalize();
   }
-  const ZCOL = {comercial: "#e4573d", residencial: "#4f8fe8", verde: "#6cc070", plaza: "#f2c29a", apartamentos: "#f0cf55", escuela: "#a996e8"};
+  const ZCOL = {comercial: "#e4573d", residencial: "#4f8fe8", mixto: "#f0b43c", verde: "#6cc070", plaza: "#f2c29a", apartamentos: "#f0cf55", escuela: "#a996e8"};
 
   function construirPlano(pano) {
     capaPlano.clear();

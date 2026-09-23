@@ -81,6 +81,7 @@
   .visor .capa { transition: opacity .6s ease; }
   .visor .comercial { filter: saturate(1.8) drop-shadow(0 0 10px rgba(228,87,61,.9)); }
   .controles { position: absolute; left: 16px; top: 16px; display: flex; gap: 8px; flex-wrap: wrap; z-index: 3; }
+  .controles.derecha { left: auto; right: 16px; }
   .controles button { background: rgba(13,26,19,.78); color: #fff; border: 1.5px solid rgba(255,255,255,.35); padding: 10px 16px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
   .controles button[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
   .leyenda { display: flex; gap: 8px 22px; flex-wrap: wrap; margin-top: 18px; font-size: 15px; color: var(--gris); }
@@ -170,6 +171,8 @@
   .etq.coral span { color: #ffe3dc; }
   .etq.azul { background: #2f6fcf; color: #fff; }
   .etq.azul span { color: #dbe8ff; }
+  .etq.oro { background: #f0b43c; color: #2a1d05; }
+  .etq.oro span { color: #4a3510; }
   .etq.oro { background: var(--sol); }
   .ficha3d { position: absolute; left: 16px; bottom: 56px; background: var(--bosque); color: #fff; padding: 12px 16px; border-radius: 12px; font-size: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
   .ficha3d span { color: rgba(255,255,255,.75); font-size: 13px; }
@@ -262,6 +265,13 @@
   .comparador .marca { position: absolute; top: 14px; font: 700 14px Inter, sans-serif; padding: 6px 12px; border-radius: 99px; background: rgba(0,0,0,.55); pointer-events: none; }
   .comparador .hoy { left: 14px; } .comparador .prop { right: 14px; background: var(--arcilla); }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .visor .capa { transition: none; } }
+  .clips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+  .clips figure { margin: 0; }
+  .clips video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 14px; background: #0d1a13; display: block; }
+  .clips figcaption { font-size: 14px; color: var(--gris); margin-top: 8px; }
+  .clips figcaption b { color: var(--tinta, inherit); display: block; font-size: 15px; }
+  @media (max-width: 900px) { .clips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .clips { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -299,10 +309,10 @@
 
   <div class="cifras" data-verify-unit="cifras">
     <div class="envoltura">
-      <div class="cifra"><b>129,645<small>m²</small></b><span>fase 1</span></div>
-      <div class="cifra acento"><b>20,000<small>m²</small></b><span>plaza comercial en la entrada</span></div>
-      <div class="cifra"><b>109 × 183.5<small>m</small></b><span>solar rectangular, 109 m de frente</span></div>
-      <div class="cifra"><b>131</b><span>solares residenciales</span></div>
+      <div class="cifra"><b>145,232<small>m²</small></b><span>de terreno</span></div>
+      <div class="cifra acento"><b>21,727<small>m²</small></b><span>solar comercial en la entrada</span></div>
+      <div class="cifra"><b>26</b><span>solares mixtos de 1,220 m²</span></div>
+      <div class="cifra"><b>99</b><span>solares residenciales</span></div>
     </div>
   </div>
 
@@ -310,7 +320,7 @@
     <div class="envoltura cabeza-historia">
       <div class="antetitulo">Maqueta 3D</div>
       <h2 id="t-maqueta">Recorre El Pozo antes de visitarlo</h2>
-      <p class="intro">El plano maestro montado sobre el terreno real, con las calles de la ciudad y las rutas en carro a los lugares que vas a usar todos los días.</p>
+      <p class="intro">La distribución del proyecto montada sobre el terreno real, con las calles de la ciudad y las rutas en carro a los lugares que vas a usar todos los días.</p>
     </div>
     <div class="historia-rejilla">
       <div class="escenario" id="escena" data-verify-unit="maqueta3d" data-state="cargando" data-capitulo="0">
@@ -335,12 +345,12 @@
         <article class="paso" data-cap="0">
           <span class="num">1 de 4</span>
           <h3>Entre la ciudad y el campo</h3>
-          <p>130 mil m² en la carretera Las Cejas–La Enea, con el bosque detrás y la ciudad a unos minutos. En la entrada, una plaza comercial en un solar de 20,000 m²; detrás, 131 solares residenciales, un parque y una escuela.</p>
+          <p>145 mil m² en la carretera Las Cejas–La Enea, con el bosque detrás y la ciudad a unos minutos. En la entrada, un solar comercial de 21,727 m²; a lo largo del lado este, 26 solares mixtos de 1,220 m²; detrás, 99 solares residenciales.</p>
         </article>
         <article class="paso" data-cap="1">
           <span class="num">2 de 4</span>
           <h3>Así se levantaría la plaza comercial</h3>
-          <p>Un solar rectangular de 109 × 183.5 m en la entrada, con 109 m de frente a la carretera. Encima, una nave de supermercado de una planta como las de las grandes cadenas del país: 7,200 m² bajo techo, locales en línea, marquesina y parqueo para unos 130 carros. A menos de 300 m pasa la nueva Circunvalación.</p>
+          <p>Un solar de 21,727 m² en la entrada, con 179.5 m de frente a la carretera por el lado este. Encima, una nave de supermercado de una planta como las de las grandes cadenas del país: 5,600 m² bajo techo, locales en línea, marquesina y parqueo para unos 100 carros. A menos de 300 m pasa la nueva Circunvalación.</p>
           <button type="button" class="boton claro-oscuro" data-reconstruir>Ver la obra otra vez</button>
           <p class="dato">Ilustración de la forma, no un diseño: <b>la nave, el parqueo y las fases son orientativos</b>.</p>
         </article>
@@ -354,7 +364,7 @@
         <article class="paso" data-cap="3">
           <span class="num">4 de 4</span>
           <h3>Detrás, la vida de barrio</h3>
-          <p>131 solares residenciales: 103 de 342 a 456 m² y 28 más grandes, de 913 a 1,220 m², en el frente a la carretera. Un parque en el centro y una escuela. Toca cualquier solar en la maqueta para ver su número y su área.</p>
+          <p>99 solares residenciales de 342 a 455 m² en cinco manzanas, y 26 solares mixtos de 1,220 m² en la franja este, para comercio o vivienda. Toca cualquier solar en la maqueta para ver su número y su área.</p>
           <a class="boton lleno" href="#areas">Ver el cuadro de áreas</a>
         </article>
       </div>
@@ -372,7 +382,7 @@
         </article>
         <article>
           <b>Frente comercial sobre la carretera</b>
-          <p>Una plaza comercial de 20,000 m² en la entrada, con 109 m de frente a la carretera Las Cejas–La Enea.</p>
+          <p>Un solar comercial de 21,727 m² en la entrada, con 179.5 m de frente a la carretera Las Cejas–La Enea.</p>
         </article>
         <article>
           <b>El comercio ya llegó a la zona</b>
@@ -386,19 +396,35 @@
     </div>
   </section>
 
+  <section id="camino">
+    <div class="envoltura">
+      <div class="antetitulo">El camino</div>
+      <h2>De la ciudad al terreno, en vídeo 4K</h2>
+      <p class="intro">Tomas de dron del recorrido desde San Francisco de Macorís hasta El Pozo.</p>
+      <div class="clips" data-verify-unit="clips" data-total="6">
+        <figure><video src="assets/clips/pueblo_01_salida_urbana.mp4" poster="assets/clips/pueblo_01_salida_urbana.jpg" muted loop playsinline preload="none" aria-label="La ciudad"></video><figcaption><b>La ciudad</b>Barrios de San Francisco de Macorís, al salir hacia el proyecto.</figcaption></figure>
+        <figure><video src="assets/clips/pueblo_03_transicion_suburbana.mp4" poster="assets/clips/pueblo_03_transicion_suburbana.jpg" muted loop playsinline preload="none" aria-label="El camino"></video><figcaption><b>El camino</b>Vía de cuatro carriles en el trayecto desde la ciudad.</figcaption></figure>
+        <figure><video src="assets/clips/pueblo_04_recta_las_cejas.mp4" poster="assets/clips/pueblo_04_recta_las_cejas.jpg" muted loop playsinline preload="none" aria-label="La llegada"></video><figcaption><b>La llegada</b>El terreno entre el bosque y la carretera.</figcaption></figure>
+        <figure><video src="assets/clips/pueblo_07_llegada_proyecto.mp4" poster="assets/clips/pueblo_07_llegada_proyecto.jpg" muted loop playsinline preload="none" aria-label="El terreno"></video><figcaption><b>El terreno</b>La franja desbrozada vista desde el norte.</figcaption></figure>
+        <figure><video src="assets/clips/pano_02_horizonte_cordillera.mp4" poster="assets/clips/pano_02_horizonte_cordillera.jpg" muted loop playsinline preload="none" aria-label="El entorno"></video><figcaption><b>El entorno</b>Llano, con la cordillera al fondo.</figcaption></figure>
+        <figure><video src="assets/clips/entrada_02_calzada_privada.mp4" poster="assets/clips/entrada_02_calzada_privada.jpg" muted loop playsinline preload="none" aria-label="El acceso"></video><figcaption><b>El acceso</b>Calle asfaltada y arbolada hacia la entrada.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
   <section id="render" class="render-sec">
     <div class="envoltura">
       <div class="antetitulo">Así se vería</div>
       <h2>La plaza sobre las fotos reales del terreno</h2>
-      <p class="intro">Render fotorrealista de la plaza comercial montado sobre las fotos de dron del terreno, con la cámara de cada foto recuperada a partir de puntos del suelo. Arrastra la línea para comparar con el terreno de hoy o recorre la obra fase por fase.</p>
-      <video class="vuelo" src="assets/render/vuelo.mp4" autoplay muted loop playsinline poster="assets/render/c0107/fase_07.jpg" aria-label="Vuelo 3D alrededor de la plaza comercial terminada"></video>
+      <p class="intro">Render fotorrealista de la plaza comercial en el solar del DXF, montado sobre las fotos de dron con la cámara de cada toma (posición, altura y rumbo del dron, afinados con puntos del suelo). Arrastra la línea para comparar con el terreno de hoy o recorre la obra fase por fase.</p>
+      <video class="vuelo" src="assets/render/vuelo.mp4" autoplay muted loop playsinline poster="assets/render/c0314/fase_07.jpg" aria-label="Vuelo 3D alrededor de la plaza comercial terminada"></video>
       <div class="vistas" role="group" aria-label="Foto de dron">
-        <button type="button" data-vista="c0104" aria-pressed="true">Desde la entrada</button>
-        <button type="button" data-vista="c0107" aria-pressed="false">Vista lateral</button>
+        <button type="button" data-vista="c0313" aria-pressed="true">Desde la entrada</button>
+        <button type="button" data-vista="c0314" aria-pressed="false">Desde el noroeste</button>
       </div>
-      <div class="comparador" id="comparador" data-verify-unit="render" data-vista="c0104" data-fase="7">
-        <img class="antes" src="assets/render/c0104/antes.jpg" alt="Foto de dron del terreno hoy, desde la entrada">
-        <div class="despues"><img src="assets/render/c0104/fase_07.jpg" alt="Render de la plaza comercial terminada sobre la misma foto"></div>
+      <div class="comparador" id="comparador" data-verify-unit="render" data-vista="c0313" data-fase="7">
+        <img class="antes" src="assets/render/c0313/antes.jpg" alt="Foto de dron del terreno hoy, desde la entrada">
+        <div class="despues"><img src="assets/render/c0313/fase_07.jpg" alt="Render de la plaza comercial terminada sobre la misma foto"></div>
         <div class="linea" aria-hidden="true"><span>⇆</span></div>
         <input type="range" min="0" max="100" value="55" aria-label="Comparar hoy con la propuesta" id="deslizador">
         <span class="marca hoy">Hoy</span><span class="marca prop">Propuesta</span>
@@ -414,10 +440,10 @@
     <div class="envoltura dos">
       <div>
         <div class="antetitulo">Cuadro de áreas</div>
-        <h2>Así se reparte la fase 1</h2>
-        <p class="intro">Cifras del Plan Maestro de Zonificación, anteproyecto de junio de 2026. En ese plano la zona comercial ocupaba la franja de la carretera y era la más grande.</p>
-        <p class="total"><b>100,622.39 m²</b> vendibles de <b>129,644.58 m²</b>, el 78 %.</p>
-        <p class="propuesta"><b>Propuesta:</b> un solar comercial rectangular de 20,000 m² (109&nbsp;×&nbsp;183.5&nbsp;m) en la entrada ocupa la plaza, los apartamentos y la primera fila de solares; los demás solares comerciales pasan a residenciales. Las barras son las del plano de junio de 2026, antes de este cambio.</p>
+        <h2>Así se reparte el terreno</h2>
+        <p class="intro">Áreas medidas sobre la distribución en DXF (UTM 19N) de septiembre de 2026.</p>
+        <p class="total"><b>92,456 m²</b> vendibles en 126 solares, de <b>145,232 m²</b> de terreno: el 64 %.</p>
+        <p class="propuesta">El plano de junio de 2026 repartía 129,644.58 m². La distribución nueva sustituye su zona comercial, su plaza y sus apartamentos por un solo solar comercial en la entrada y la franja de mixtos.</p>
       </div>
       <div class="barras" data-verify-unit="areas" id="barras"></div>
     </div>
@@ -427,23 +453,28 @@
     <div class="envoltura">
       <div class="antetitulo">El terreno</div>
       <h2>Así queda el plano sobre el terreno</h2>
-      <p class="intro">El plano maestro a escala real, colocado sobre la foto de dron. En rojo, el solar comercial de 20,000 m² en la entrada, de frente a la carretera.</p>
-      <div class="visor" data-verify-unit="visor-plano" data-capa="comercial">
+      <p class="intro">La distribución del DXF sobre la ortofoto del vuelo (4 cm por píxel) y sobre las fotos de dron, cada una con la posición, la altura y el rumbo de su cámara. En rojo, el solar comercial de 21,727 m²; en amarillo, los mixtos junto a la carretera. El terreno es llano: en el solar comercial el suelo varía 2 m de punta a punta.</p>
+      <div class="visor" data-verify-unit="visor-plano" data-capa="comercial" data-foto="DJI_0313">
         <div class="controles" role="group" aria-label="Capas del plano">
           <button type="button" data-capa="foto" aria-pressed="false">Solo la foto</button>
           <button type="button" data-capa="plano" aria-pressed="false">Plano completo</button>
           <button type="button" data-capa="comercial" aria-pressed="true">Zona comercial</button>
         </div>
+        <div class="controles derecha" role="group" aria-label="Foto de dron">
+          <button type="button" data-foto="orto" aria-pressed="false">Desde arriba</button>
+          <button type="button" data-foto="DJI_0313" aria-pressed="true">Desde la entrada</button>
+          <button type="button" data-foto="DJI_0315" aria-pressed="false">Desde el sur</button>
+        </div>
         <div class="lienzo">
-          <img src="assets/terreno.jpg" alt="Foto de dron del terreno de El Pozo junto a la carretera Las Cejas–La Enea">
-          <img class="capa plano" src="assets/plano.png" alt="" style="opacity:.3">
-          <img class="capa comercial" src="assets/comercial.png" alt="" style="opacity:1">
+          <img class="base" src="assets/terreno/DJI_0313.jpg" alt="Foto de dron del terreno de El Pozo junto a la carretera Las Cejas–La Enea">
+          <img class="capa plano" src="assets/terreno/plano-DJI_0313.png" alt="" style="opacity:.3">
+          <img class="capa comercial" src="assets/terreno/comercial-DJI_0313.png" alt="" style="opacity:1">
         </div>
       </div>
       <div class="leyenda">
         <span><i style="background:var(--arcilla)"></i>Zona comercial</span>
+        <span><i style="background:#f0b43c"></i>Mixto</span>
         <span><i style="background:var(--cielo)"></i>Residencial</span>
-        <span><i style="background:#bfe4bf"></i>Parque y áreas verdes</span>
       </div>
     </div>
   </section>
@@ -452,25 +483,26 @@
     <div class="envoltura dos">
       <div>
         <div class="antetitulo">Zona comercial</div>
-        <h2>Una plaza comercial de 20,000 m²</h2>
+        <h2>Un solar comercial de 21,727 m²</h2>
         <ul class="ventajas">
-          <li><b>Rectangular, 109 × 183.5 m</b>En la entrada del proyecto, donde el plano de junio tenía la plaza y los apartamentos. Propuesta.</li>
-          <li><b>109 m de frente a la carretera</b>Sobre la carretera Las Cejas–La Enea, con la calle marginal delante para entrar y salir.</li>
+          <li><b>Un trapecio de 144.2 × 179.5 × 135.5 × 137.9 m</b>En la entrada del proyecto, de la calle de tierra del oeste hasta la carretera; no cruza la calle.</li>
+          <li><b>179.5 m de frente a la carretera</b>Todo el lado este da a la carretera Las Cejas–La Enea.</li>
           <li><b>A menos de 300 m de la Circunvalación</b>La vía nueva de 9,8 km que rodea la ciudad por el sur.</li>
-          <li><b>Para una nave de supermercado</b>Caben 7,200 m² bajo techo, locales en línea y parqueo. Como referencia, el Merca Jumbo abierto en Las Terrenas en 2026 tiene 3,800 m² de construcción y 200 parqueos.</li>
+          <li><b>Para una nave de supermercado</b>Caben 5,600 m² bajo techo, locales en línea y parqueo. Como referencia, el Merca Jumbo abierto en Las Terrenas en 2026 tiene 3,800 m² de construcción y 200 parqueos.</li>
         </ul>
       </div>
       <div>
-        <svg class="croquis" viewBox="0 0 320 380" role="img" aria-label="Croquis del solar comercial: rectángulo de 109 m de frente a la carretera por 183.5 m de fondo, 20,000 m²">
-          <rect x="72" y="14" width="174.4" height="293.6" rx="4" fill="#fde3dc" stroke="#e4573d" stroke-width="3"/>
-          <text x="159" y="150" text-anchor="middle" style="font-size:22px;font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800">20,000 m²</text>
-          <text x="159" y="174" text-anchor="middle" class="suave">solar comercial</text>
-          <line x1="72" y1="320" x2="246.4" y2="320" stroke="#16211b" stroke-width="1.5"/>
-          <text x="159" y="338" text-anchor="middle">109 m de frente</text>
-          <line x1="260" y1="14" x2="260" y2="307.6" stroke="#16211b" stroke-width="1.5"/>
-          <text x="274" y="165" transform="rotate(90 274 165)" text-anchor="middle">183.5 m</text>
-          <rect x="0" y="350" width="320" height="22" fill="#d6d2c8"/>
-          <text x="160" y="366" text-anchor="middle" class="suave" style="font-size:12px">Carretera Las Cejas–La Enea</text>
+        <svg class="croquis" viewBox="0 0 330 310" role="img" aria-label="Croquis del solar comercial: trapecio de 21,727 m², con 179.5 m de frente a la carretera al este y la calle de tierra al oeste">
+          <polygon points="262.7,-1.3999999999999986 278.7,-1.3999999999999986 254.3,309.6 238.3,309.6" fill="#d6d2c8"/>
+          <polygon points="41.6,45.7 51.6,45.7 36.3,281.3 26.299999999999997,281.3" fill="#e8dcc0"/>
+          <text x="268.3" y="149.10000000000002" text-anchor="middle" class="suave" style="font-size:11px" transform="rotate(84 268.3 149.10000000000002)">Carretera</text>
+          <text x="18.299999999999997" y="158.5" text-anchor="middle" class="suave" style="font-size:11px" transform="rotate(-86 18.299999999999997 158.5)">Calle</text>
+          <polygon points="55.6,65.7 246.7,28.6 222.3,269.6 40.3,251.3" fill="#fde3dc" stroke="#e4573d" stroke-width="3" stroke-linejoin="round"/>
+          <text x="141.2" y="149.8" text-anchor="middle" style="font-size:22px;font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800">21,727 m²</text>
+          <text x="141.2" y="171.8" text-anchor="middle" class="suave">solar comercial</text>
+          <text x="148.5" y="37.4" text-anchor="middle" class="suave" style="font-size:12px">144.2 m</text>
+          <text x="129.9" y="278.4" text-anchor="middle" class="suave" style="font-size:12px">135.5 m</text>
+          <text x="198.6" y="151.7" text-anchor="middle" class="suave" style="font-size:12px">179.5 m</text>
         </svg>
         <div class="rejilla" id="rejilla-comercial" data-verify-unit="lotes-comerciales" data-total="0" data-elegido=""></div>
         <div class="ficha" id="ficha-comercial" aria-live="polite">Toca el solar para ver su ficha.</div>
@@ -483,12 +515,13 @@
       <div class="antetitulo">Residencial</div>
       <h2>Detrás, la parte residencial</h2>
       <div class="tarjetas">
-        <div class="tarjeta"><b>131</b><span>solares residenciales, de 342 a 1,220&nbsp;m²</span></div>
-        <div class="tarjeta"><b>Parque</b><span>en el centro de la zona residencial</span></div>
-        <div class="tarjeta"><b>615 m²</b><span>de escuela</span></div>
+        <div class="tarjeta"><b>99</b><span>solares residenciales, de 342 a 455&nbsp;m²</span></div>
+        <div class="tarjeta"><b>26</b><span>solares mixtos de 1,220&nbsp;m², comercio o vivienda</span></div>
+        <div class="tarjeta"><b>92,456 m²</b><span>vendibles en total</span></div>
       </div>
       <details>
-        <summary>Ver las áreas de los 131 solares residenciales</summary>
+        <summary>Ver las áreas de los 26 mixtos y los 99 residenciales</summary>
+        <div class="rejilla" id="rejilla-mixta" data-verify-unit="lotes-mixtos" data-total="0"></div>
         <div class="rejilla" id="rejilla-residencial" data-verify-unit="lotes-residenciales" data-total="0"></div>
       </details>
     </div>
@@ -498,7 +531,7 @@
     <div class="envoltura">
       <div class="antetitulo">Recorrido 360</div>
       <h2>Párate sobre el terreno</h2>
-      <p class="intro">Tres fotos 360 tomadas con dron a unos 110 m sobre el proyecto, con el plano dibujado en el suelo. Arrastra para mirar alrededor y toca «Ir a» para moverte de un punto a otro.</p>
+      <p class="intro">Tres fotos 360 del dron, a 71–77 m sobre el proyecto, con la distribución dibujada en el suelo en su sitio. Arrastra para mirar alrededor y toca «Ir a» para moverte de un punto a otro.</p>
       <div class="visor360" id="visor360" data-verify-unit="visor360" data-state="cargando" data-plano="si">
         <div class="etiquetas360"></div>
         <div class="barra360">
@@ -524,15 +557,14 @@
     <div class="envoltura dos">
       <div>
         <div class="antetitulo" style="color:var(--sol)">Estado del proyecto</div>
-        <h2>Anteproyecto, junio de 2026</h2>
+        <h2>Anteproyecto, septiembre de 2026</h2>
         <p style="margin-top:22px"><a class="boton lleno" href="informe.pdf" target="_blank" rel="noopener">Informe para inversionistas (PDF)</a></p>
-        <p class="intro">El plano maestro de zonificación de la fase 1 está en etapa de anteproyecto. Las áreas de esta presentación salen de ese plano; precios y condiciones se definen en la etapa siguiente.</p>
+        <p class="intro">El proyecto está en anteproyecto. Las áreas de esta presentación salen de la distribución en DXF; precios y condiciones se definen en la etapa siguiente.</p>
       </div>
       <ul class="hechos">
         <li><b>Ubicación</b>Carretera Las Cejas–La Enea, San Francisco de Macorís</li>
-        <li><b>Fase 1</b>129,644.58 m², 100,622.39 m² vendibles</li>
-        <li><b>Solares</b>1 comercial de 20,000 m² y 131 residenciales (propuesta)</li>
-        <li><b>Equipamiento</b>Parque y escuela</li>
+        <li><b>Terreno</b>145,232 m², 92,456 m² vendibles</li>
+        <li><b>Solares</b>1 comercial de 21,727 m², 26 mixtos de 1,220 m² y 99 residenciales</li>
       </ul>
     </div>
   </section>
@@ -541,7 +573,7 @@
 <footer>
   <div class="envoltura">
     <p>El Pozo · Desarrollo habitacional y comercial · San Francisco de Macorís, República Dominicana.</p>
-    <p>Cifras del Plan Maestro (Zonificación), anteproyecto de junio de 2026. Vías, edificios y rutas: © colaboradores de OpenStreetMap y OSRM.</p>
+    <p>Áreas de la distribución en DXF (UTM 19N), septiembre de 2026. Vías, edificios y rutas: © colaboradores de OpenStreetMap y OSRM.</p>
     <p>Circunvalación: Diario Libre, El Caribe y Cachicha.com (enero 2026). Supermercados Bravo: Informe56 (marzo 2022).</p>
   </div>
 </footer>
@@ -567,11 +599,19 @@
   const visor = document.querySelector(".visor");
   const capas = {plano: visor.querySelector(".plano"), comercial: visor.querySelector(".comercial")};
   const OPACIDAD = {foto: {plano: 0, comercial: 0}, plano: {plano: 0.85, comercial: 0}, comercial: {plano: 0.3, comercial: 1}};
-  visor.querySelectorAll(".controles button").forEach((b) => b.addEventListener("click", () => {
+  visor.querySelectorAll("[data-capa]").forEach((b) => b.addEventListener("click", () => {
     const modo = b.dataset.capa;
-    visor.querySelectorAll(".controles button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    visor.querySelectorAll("[data-capa]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     for (const k in capas) capas[k].style.opacity = OPACIDAD[modo][k];
     visor.dataset.capa = modo;
+  }));
+  visor.querySelectorAll("[data-foto]").forEach((b) => b.addEventListener("click", () => {
+    const f = b.dataset.foto;
+    visor.querySelectorAll("[data-foto]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    visor.querySelector(".base").src = `assets/terreno/${f}.jpg`;
+    capas.plano.src = `assets/terreno/plano-${f}.png`;
+    capas.comercial.src = `assets/terreno/comercial-${f}.png`;
+    visor.dataset.foto = f;
   }));
 
   // Rejillas de lotes
@@ -580,11 +620,11 @@
     lotes.forEach((l) => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "lote " + clase; b.setAttribute("aria-pressed", "false");
-      b.innerHTML = l.grande ? `<strong>Solar ${l.id}</strong>${fmt(l.m2, 2)} m² · 109 × 183.5 m` : `<strong>${l.id}</strong>${fmt(l.m2, 2)} m²`;
+      b.innerHTML = l.grande ? `<strong>Solar ${l.id}</strong>${fmt(l.m2, 2)} m² · 179.5 m de frente` : `<strong>${l.id}</strong>${fmt(l.m2, 2)} m²`;
       if (ficha) b.addEventListener("click", () => {
         el.querySelectorAll(".lote").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
         el.dataset.elegido = l.id;
-        ficha.innerHTML = `<strong>Solar ${l.id}</strong> · ${fmt(l.m2, 2)} m² · rectangular, 109 m de frente a la carretera y 183.5 m de fondo. Propuesta.`;
+        ficha.innerHTML = `<strong>Solar ${l.id}</strong> · ${fmt(l.m2, 2)} m² · trapecio de 144.2 / 179.5 / 135.5 / 137.9 m, con el lado este (179.5 m) de frente a la carretera.`;
       });
       el.appendChild(b);
     });
@@ -593,8 +633,8 @@
   rejilla("rejilla-comercial", D.lotes.comerciales, "c", document.getElementById("ficha-comercial"));
   const cgBtn = document.querySelector("#rejilla-comercial .lote");
   if (cgBtn) cgBtn.classList.add("grande");
+  rejilla("rejilla-mixta", D.lotes.mixtos, "c", null);
   rejilla("rejilla-residencial", D.lotes.residenciales, "", null);
-  document.querySelectorAll("#rejilla-residencial .lote").forEach((b, i) => { if (D.lotes.residenciales[i].antes) b.classList.add("c"); });
 
   // Pasos de la maqueta: el que está a la vista manda el capítulo
   const pasos = [...document.querySelectorAll(".paso")];
@@ -650,15 +690,12 @@
     }));
   })();
 
-  // Cuadro de áreas (Plan Maestro, junio 2026)
+  // Cuadro de áreas (distribución en DXF, septiembre 2026; scripts/dxf_a_plano.py)
   const AREAS = [
-    ["Zona comercial", 45927.825, "#e4573d"],
-    ["Residencial unifamiliar", 43860.38, "#5b93e6"],
-    ["Calles", 23979.232, "#9aa39c"],
-    ["Área verde", 7407.38, "#7fbf6a"],
-    ["Residencial multifamiliar", 5782.468, "#f0cf55"],
-    ["Plaza", 5051.721, "#efc9a5"],
-    ["Escuela", 614.887, "#a996e8"],
+    ["Residencial (99 solares)", 39008.9, "#5b93e6"],
+    ["Mixto (26 solares de 1,220 m²)", 31720.0, "#f0b43c"],
+    ["Comercial (1 solar)", 21726.6, "#e4573d"],
+    ["Calles, áreas verdes, márgenes y franja sin asignar", 52777.0, "#9aa39c"],
   ];
   const barras = document.getElementById("barras");
   const maximo = Math.max(...AREAS.map((a) => a[1]));
@@ -669,6 +706,9 @@
     barras.appendChild(d);
   });
   barras.dataset.total = AREAS.length;
+  // Clips del camino: solo se reproducen los que están a la vista
+  const obsClips = new IntersectionObserver((es) => es.forEach((e) => { const v = e.target; if (e.isIntersecting) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); }), {threshold: 0.35});
+  document.querySelectorAll(".clips video").forEach((v) => obsClips.observe(v));
 </script>
 
 </body>

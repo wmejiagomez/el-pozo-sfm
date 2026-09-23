@@ -109,10 +109,22 @@
     plano.receiveShadow = true;
     plano.renderOrder = 1;
     escena.add(plano);
+    // Encima, la ortofoto del vuelo (ODM, 4 cm/px reducida a 0.34 m/px) donde la hay:
+    // límites en metros UTM 19N desde el centro (scripts/geo_local.py)
+    const O = {izq: -245.03, der: 161.4, abajo: -484.81, arriba: 408.94};
+    const odm = cargaTex.load("assets/orto_odm.jpg");
+    odm.encoding = THREE.sRGBEncoding;
+    odm.anisotropy = 8;
+    const planoOdm = new THREE.Mesh(new THREE.PlaneGeometry(O.der - O.izq, O.arriba - O.abajo), new THREE.MeshStandardMaterial({map: odm, alphaMap: cargaTex.load("assets/orto_odm_alfa.png"), transparent: true, roughness: 1, depthWrite: false}));
+    planoOdm.rotation.x = -Math.PI / 2;
+    planoOdm.position.copy(P((O.izq + O.der) / 2, (O.abajo + O.arriba) / 2, 0.2));
+    planoOdm.receiveShadow = true;
+    planoOdm.renderOrder = 2;
+    escena.add(planoOdm);
   }
 
   // Terreno del proyecto (arena), bajo los lotes
-  const ESQ = D.plano.terreno;  // contorno del terreno a escala real (1:950)
+  const ESQ = D.plano.terreno;  // envolvente del dibujo del DXF (145,232 m²)
   const forma = (pts) => { const s = new THREE.Shape(); pts.forEach(([x, n], i) => (i ? s.lineTo(x, n) : s.moveTo(x, n))); return s; };
   const losa = new THREE.Mesh(new THREE.ExtrudeGeometry(forma(ESQ), {depth: 0.6, bevelEnabled: false}).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({color: "#d9c9a6", roughness: 1, transparent: true, opacity: 0.18, depthWrite: false}));
   losa.receiveShadow = true;
@@ -122,6 +134,7 @@
   const ZONA = {
     comercial: {color: "#e4573d", h: 7},
     residencial: {color: "#4f86d9", h: 1.2},
+    mixto: {color: "#f0b43c", h: 1.2},
     verde: {color: "#7fbf6a", h: 0.8},
     plaza: {color: "#efc9a5", h: 1},
     apartamentos: {color: "#f0cf55", h: 14},
@@ -182,24 +195,36 @@
   ejemplos.visible = false;
   escena.add(ejemplos);
 
-  // ---- Plaza comercial unificada en el solar de 20,000 m² (ilustración de la forma:
+  // ---- Plaza comercial unificada en el solar comercial de 21,727 m² (ilustración de la forma:
   // nave de supermercado de una planta con cubierta a dos aguas, fachada alta al frente,
   // marquesina, parqueo y techo para motores). Se construye por fases con `construir(p)`.
   const plaza = new THREE.Group();
   const fases = [];  // {desde, hasta, fn(k)} con k de 0 a 1 dentro de la fase
   if (cg) {
-    const [a, b, c] = cg.p;
-    const eje = new THREE.Vector2(b[0] - a[0], b[1] - a[1]);
-    const lado2 = new THREE.Vector2(c[0] - b[0], c[1] - b[1]);
-    // eje local X = a lo largo de la carretera (el lado de 109 m)
-    const largo = eje.length() < lado2.length() ? eje : lado2;
-    const angPlaza = Math.atan2(largo.y, largo.x);
-    const cx0 = cg.p.reduce((s, q) => s + q[0], 0) / 4, cn0 = cg.p.reduce((s, q) => s + q[1], 0) / 4;
+    // eje local X = a lo largo del frente a la carretera (lado este del solar del DXF, 179.5 m)
+    const nv = cg.p.length;
+    let ie = 0;
+    for (let i = 0; i < nv; i++) { const q = cg.p[i], r = cg.p[(i + 1) % nv], e = cg.p[ie], f = cg.p[(ie + 1) % nv]; if (q[0] + r[0] > e[0] + f[0]) ie = i; }
+    const fa = cg.p[ie], fb = cg.p[(ie + 1) % nv];
+    // rotation.y = θ lleva el X local a (cos θ, sen θ) en (este, norte)
+    const angPlaza = Math.atan2(fb[1] - fa[1], fb[0] - fa[0]);
+    const cx0 = cg.p.reduce((s, q) => s + q[0], 0) / nv, cn0 = cg.p.reduce((s, q) => s + q[1], 0) / nv;
     plaza.position.copy(P(cx0, cn0, 0));
     plaza.rotation.y = angPlaza;
     // que +Z local mire a la carretera (al este)
-    const zLocal = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), angPlaza);
+    const zLocal = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), plaza.rotation.y);
     if (zLocal.x < 0) plaza.rotation.y += Math.PI;
+    const th = plaza.rotation.y, cs = Math.cos(th), sn = Math.sin(th);
+    // la obra (pensada para 108 × 182 m) se corre 12 m a lo largo del frente para caber en el
+    // trapecio: el lado oeste solo tiene 92 m (igual que render3d/escena_blender.py)
+    // En three (y arriba) el X local con Z al este apunta al NORTE; en Blender (z arriba), al
+    // sur. Para que la obra quede igual que en render3d/escena_blender.py (locales al norte,
+    // comprobada contra el lindero) se refleja X y el origen se corre 10 m hacia el sur.
+    plaza.scale.x = -1;
+    const lf = Math.hypot(fb[0] - fa[0], fb[1] - fa[1]);
+    const ox = cx0 + (10 * (fb[0] - fa[0])) / lf, on = cn0 + (10 * (fb[1] - fa[1])) / lf;
+    plaza.position.copy(P(ox, on, 0));
+    const aLocal = ([x, n]) => { const dx = x - ox, dz = -(n - on); return [-(dx * cs - dz * sn), dx * sn + dz * cs]; };
     escena.add(plaza);
 
     const M = (color, extra = {}) => new THREE.MeshStandardMaterial({color, roughness: 0.7, ...extra});
@@ -208,12 +233,19 @@
     const suave = (k) => k * k * (3 - 2 * k);
 
     // 1. Nivelación: la losa pasa de tierra a hormigón
-    const losaP = caja(108, 0.6, 182, pbr("hormigon", 12, {color: "#8a6a4a"}), 0, 2.6, 0);
+    // losa con la forma real del solar (trapecio del DXF), no un rectángulo
+    const formaLosa = new THREE.Shape();
+    cg.p.map(aLocal).forEach(([lx, lz], i) => (i ? formaLosa.lineTo(lx, -lz) : formaLosa.moveTo(lx, -lz)));
+    const losaP = new THREE.Mesh(new THREE.ExtrudeGeometry(formaLosa, {depth: 0.6, bevelEnabled: false}).rotateX(-Math.PI / 2), pbr("hormigon", 12, {color: "#8a6a4a"}));
+    losaP.position.y = 2.3;
+    losaP.receiveShadow = true;
+    losaP.userData.sinLindero = true;  // es el propio solar
+    plaza.add(losaP);
     const tierra = new THREE.Color("#8a6a4a"), hormigon = new THREE.Color("#b9b6ae");
     fase(0, 0.1, (k) => { losaP.scale.y = Math.max(0.01, k); losaP.material.color.copy(tierra).lerp(hormigon, k); });
 
-    // Rejilla de la nave: X -40..40, Z -80..10 (80 × 90 m = 7,200 m²)
-    const NX = 9, NZ = 10, X0 = -40, X1 = 40, Z0 = -80, Z1 = 10, ALTO = 9, CUMBRE = 13;
+    // Rejilla de la nave: X -40..40, Z -65..5 (80 × 70 m = 5,600 m²)
+    const NX = 9, NZ = 8, X0 = -40, X1 = 40, Z0 = -65, Z1 = 5, ALTO = 9, CUMBRE = 13;
     const xs = [...Array(NX)].map((_, i) => X0 + ((X1 - X0) * i) / (NX - 1));
     const zs = [...Array(NZ)].map((_, i) => Z0 + ((Z1 - Z0) * i) / (NZ - 1));
     // 2. Zapatas
@@ -276,29 +308,29 @@
     const fachadaTodo = [...muros, fachada, franja, vidrio, marquesina, ...pilares];
     fachadaTodo.forEach((m) => { m.userData.y = m.position.y; m.userData.h = m.geometry.parameters.height; m.scale.y = 0.01; });
     // Locales en línea al sur de la nave
-    const locales = caja(10, 6, 88, M("#efe9dc"), -48, 3.2 + 3, zc);
+    const locales = caja(10, 6, 68, M("#efe9dc"), -40, 3.2 + 3, zc + 1);
     locales.userData.y = locales.position.y; locales.userData.h = 6; locales.scale.y = 0.01;
     fachadaTodo.push(locales);
     fase(0.62, 0.76, (k) => fachadaTodo.forEach((m, i) => { const q = Math.min(1, Math.max(0, k * 1.4 - (i / fachadaTodo.length) * 0.4)); m.scale.y = Math.max(0.01, suave(q)); m.visible = q > 0.02; m.position.y = 3.2 + (m.userData.h * m.scale.y) / 2 + (m.userData.y - 3.2 - m.userData.h / 2); }));
     // 7. Parqueo: asfalto, rayas y techo para motores
-    const asfalto = caja(100, 0.3, 62, pbr("asfalto", 10, {color: "#8d9194", roughness: 0.95}), 0, 3.35, 57);
+    const asfalto = caja(94, 0.3, 38, pbr("asfalto", 10, {color: "#8d9194", roughness: 0.95}), -2, 3.35, 41);
     asfalto.scale.z = 0.01;
     const rayas = [];
-    for (let fila = 0; fila < 4; fila++) {
-      for (let i = 0; i < 34; i++) {
-        const r = caja(0.2, 0.05, 5, M("#f2f2f2"), -46 + i * 2.8, 3.55, 34 + fila * 14);
+    for (let fila = 0; fila < 3; fila++) {
+      for (let i = 0; i < 33; i++) {
+        const r = caja(0.2, 0.05, 5, M("#f2f2f2"), -45 + i * 2.8, 3.55, 29 + fila * 13);
         r.visible = false;
         rayas.push(r);
       }
     }
-    const techoMotos = caja(30, 0.4, 8, M("#d9dcdd", {metalness: 0.3}), 30, 3.2 + 4, 20);
+    const techoMotos = caja(24, 0.4, 6, M("#d9dcdd", {metalness: 0.3}), 32, 3.2 + 4, 17);
     techoMotos.visible = false;
-    fase(0.76, 0.88, (k) => { asfalto.visible = k > 0.01; asfalto.scale.z = Math.max(0.01, suave(k)); asfalto.position.z = 26 + 31 * suave(k); rayas.forEach((r, i) => (r.visible = k * rayas.length > i)); techoMotos.visible = k > 0.8; });
+    fase(0.76, 0.88, (k) => { asfalto.visible = k > 0.01; asfalto.scale.z = Math.max(0.01, suave(k)); asfalto.position.z = 22 + 19 * suave(k); rayas.forEach((r, i) => (r.visible = k * rayas.length > i)); techoMotos.visible = k > 0.8; });
     // 8. Paisajismo: árboles alrededor
     const arbolesP = [];
-    for (let i = 0; i < 26; i++) {
+    for (let i = 0; i < 22; i++) {
       const t = new THREE.Mesh(new THREE.IcosahedronGeometry(3.2, 1).scale(1, 0.85, 1).translate(0, 5.4, 0), M("#2c5a2c", {flatShading: true}));
-      const perim = i < 13 ? [-52 + i * 8.5, 3.2, 90] : [53, 3.2, -84 + (i - 13) * 13];
+      const perim = i < 11 ? [-42 + i * 8.3, 3.2, 62] : [44, 3.2, -62 + (i - 11) * 11.5];
       t.position.set(...perim);
       t.scale.setScalar(0.001);
       t.castShadow = true;
@@ -310,14 +342,37 @@
     const grua = new THREE.Group();
     const mastil = new THREE.Mesh(new THREE.BoxGeometry(2, 34, 2), M("#f3b33d"));
     mastil.position.y = 17;
-    const pluma = new THREE.Mesh(new THREE.BoxGeometry(46, 1.4, 1.4), M("#f3b33d"));
-    pluma.position.set(12, 34, 0);
+    const pluma = new THREE.Mesh(new THREE.BoxGeometry(30, 1.4, 1.4), M("#f3b33d"));
+    pluma.position.set(6, 34, 0);
     grua.add(mastil, pluma);
-    grua.position.set(46, 3.2, -30);
+    grua.position.set(20, 3.2, -30);
     grua.traverse((m) => (m.castShadow = true));
     plaza.add(grua);
     fase(0.18, 0.78, (k) => { pluma.rotation.y = k * Math.PI * 3; });
     fase(0, 1, (k) => { grua.visible = k > 0.15 && k < 0.8; });
+  }
+  // Lindero: con la obra terminada, ninguna pieza de la plaza puede salir del solar del DXF
+  // (Werner, 23/09). Se publica en data-lindero-fuera del escenario para las pruebas.
+  function verificarLindero() {
+    if (!cg) return;
+    const pol = cg.p;
+    const dentro = (x, n) => { let c = false; for (let i = 0, j = pol.length - 1; i < pol.length; j = i++) { const [x1, n1] = pol[i], [x2, n2] = pol[j]; if ((n1 > n) !== (n2 > n) && x < ((x2 - x1) * (n - n1)) / (n2 - n1) + x1) c = !c; } return c; };
+    plaza.updateMatrixWorld(true);
+    const caja3 = new THREE.Box3(), v = new THREE.Vector3();
+    let fuera = 0;
+    plaza.traverse((m) => {
+      if (!m.isMesh || m === plaza || m.userData.sinLindero) return;
+      let vis = true;
+      for (let q = m; q && q !== plaza; q = q.parent) vis = vis && q.visible;
+      if (!vis) return;
+      m.geometry.computeBoundingBox();
+      caja3.copy(m.geometry.boundingBox);
+      for (const [a, b, c] of [[0, 0, 0], [1, 0, 0], [0, 0, 1], [1, 0, 1]]) {
+        v.set(a ? caja3.max.x : caja3.min.x, caja3.min.y, c ? caja3.max.z : caja3.min.z).applyMatrix4(m.matrixWorld);
+        if (!dentro(v.x, -v.z)) { fuera++; break; }
+      }
+    });
+    cont.dataset.linderoFuera = String(fuera);
   }
   let progresoObra = 1;
   function construir(p) {
@@ -328,6 +383,7 @@
     }
   }
   construir(1);
+  verificarLindero();
 
   // ---- Árboles: el bosque real al oeste del terreno y los del parque
   // copa redondeada y algo irregular + tronco, en una sola geometría
@@ -471,8 +527,10 @@
   const [cxR, cnR] = centroZona("residencial");
   // Orden = prioridad: si dos etiquetas chocan, la de después se aparta o se oculta.
   const [cxG, cnG] = [cg.p.reduce((a, q) => a + q[0], 0) / cg.p.length, cg.p.reduce((a, q) => a + q[1], 0) / cg.p.length];
-  etiqueta("<b>Plaza comercial</b><span>solar de 20,000 m² · 109 × 183.5 m</span>", P(cxG, cnG, 40), [0, 1, 3], "coral");
-  etiqueta("<b>Residencial</b><span>131 solares</span>", P(cxR, cnR - 60, 22), [0, 3], "azul");
+  etiqueta("<b>Plaza comercial</b><span>solar de 21,727 m² · 179.5 m de frente</span>", P(cxG, cnG, 40), [0, 1, 3], "coral");
+  const [cxM, cnM] = centroZona("mixto");
+  etiqueta("<b>Mixtos</b><span>26 solares de 1,220 m²</span>", P(cxM, cnM, 18), [0, 3], "oro");
+  etiqueta("<b>Residencial</b><span>99 solares</span>", P(cxR, cnR - 60, 22), [0, 3], "azul");
   etiqueta("<b>El Pozo</b>", P(0, 360, 40), [2], "grande");
   etiqueta("Carretera Las Cejas – La Enea", P(110, 120, 6), [1]);
   const ptCirc = D.vias.filter((v) => v.c === "circ").flatMap((v) => v.p).reduce((a, q) => (Math.hypot(q[0], q[1] - 300) < Math.hypot(a[0], a[1] - 300) ? q : a));
