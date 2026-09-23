@@ -61,6 +61,19 @@
   .comparar input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
   .comparar .m { position: absolute; bottom: 12px; font: 600 12px Inter, sans-serif; background: rgba(0,0,0,.6); color: #fff; padding: 5px 10px; border-radius: 8px; pointer-events: none; }
   .comparar .m.i { left: 84px; } .comparar .m.d { right: 12px; background: var(--arcilla); }
+  .comparar.foto { aspect-ratio: 3 / 2; }
+  .vistas-foto { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+  .vistas-foto button { border: 1px solid var(--linea); background: #fff; font: 600 14px Inter, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .vistas-foto button[aria-pressed="true"] { background: var(--bosque); color: #fff; border-color: var(--bosque); }
+  .etapas { aspect-ratio: 3 / 2; }
+  .etapas img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s ease; }
+  .etapas img.ver { opacity: 1; }
+  .pasos-etapa { list-style: none; padding: 0; margin: 14px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .pasos-etapa button { width: 100%; text-align: left; border: 1px solid var(--linea); background: #fff; border-radius: 12px; padding: 12px 14px; cursor: pointer; font: 500 14px Inter, sans-serif; color: var(--gris); display: grid; gap: 2px; position: relative; overflow: hidden; }
+  .pasos-etapa b { color: var(--tinta); font-size: 15px; }
+  .pasos-etapa button[aria-pressed="true"] { border-color: var(--arcilla); box-shadow: 0 0 0 2px rgba(228,87,61,.18); }
+  .pasos-etapa button[aria-pressed="true"] b { color: var(--arcilla); }
+  @media (max-width: 700px) { .pasos-etapa { grid-template-columns: 1fr 1fr; } }
   /* El camino en vídeo */
   .camino { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 26px; counter-reset: paso; }
   .camino figure { margin: 0; position: relative; }
@@ -199,6 +212,7 @@
       <a href="#proyecto">Proyecto</a>
       <a href="#recorrido3d">3D</a>
       <a href="#camino">Camino</a>
+      <a href="#proyeccion">Proyección</a>
       <a href="#fotos">Fotos</a>
       <a href="#recorrido">360</a>
       <a href="#solares">Solares</a>
@@ -258,15 +272,44 @@
     </div>
   </section>
 
+  <section id="proyeccion">
+    <div class="envoltura">
+      <div class="etiqueta">Proyección</div>
+      <h2>Cómo crecería El Pozo</h2>
+      <p class="sub">Una secuencia posible de desarrollo, sobre la foto de dron desde la entrada.</p>
+      <div class="marco etapas" id="etapas" data-verify-unit="etapas" data-etapa="3">
+        <span class="rotulo">Render ilustrativo · orden de ejemplo</span>
+        <img src="assets/terminado/hoy-0313.jpg" alt="Hoy" data-e="0" loading="lazy">
+        <img src="assets/terminado/e1-0313.jpg" alt="Etapa 1: plaza comercial" data-e="1" loading="lazy">
+        <img src="assets/terminado/e2-0313.jpg" alt="Etapa 2: locales en los solares mixtos" data-e="2" loading="lazy">
+        <img src="assets/terminado/e3-0313.jpg" alt="Etapa 3: viviendas y calles" data-e="3" loading="lazy" class="ver">
+      </div>
+      <ol class="pasos-etapa" role="group" aria-label="Etapas">
+        <li><button type="button" data-e="0"><b>Hoy</b><span>El terreno</span></button></li>
+        <li><button type="button" data-e="1"><b>Etapa 1</b><span>Plaza comercial</span></button></li>
+        <li><button type="button" data-e="2"><b>Etapa 2</b><span>Locales frente a la carretera</span></button></li>
+        <li><button type="button" data-e="3" aria-pressed="true"><b>Etapa 3</b><span>Viviendas y calles</span></button></li>
+      </ol>
+    </div>
+  </section>
+
   <section id="fotos">
     <div class="envoltura">
       <div class="etiqueta">Fotos del dron</div>
-      <h2>Cómo está hoy</h2>
-      <div class="fotos">
-        <img src="assets/terreno/DJI_0313.jpg" alt="El terreno desde la entrada" loading="lazy">
-        <img src="assets/terreno/DJI_0315.jpg" alt="El terreno desde el sur" loading="lazy">
-        <img src="assets/clips/pano_02_horizonte_cordillera.jpg" alt="El entorno con la cordillera al fondo" loading="lazy">
-        <img src="assets/clips/pueblo_01_salida_urbana.jpg" alt="La ciudad, camino al proyecto" loading="lazy">
+      <h2>Hoy y terminado</h2>
+      <p class="sub">Desliza sobre la foto: el terreno hoy y el proyecto funcionando, con la plaza, los locales frente a la carretera y las casas.</p>
+      <div class="vistas-foto" role="group" aria-label="Vista">
+        <button type="button" data-vista="0313" aria-pressed="true">Desde la entrada</button>
+        <button type="button" data-vista="0314" aria-pressed="false">Desde el noroeste</button>
+        <button type="button" data-vista="0315" aria-pressed="false">Desde el sur</button>
+      </div>
+      <div class="marco comparar foto" id="hoy-terminado" data-verify-unit="hoy-terminado" data-valor="50" data-vista="0313">
+        <span class="rotulo">Render ilustrativo</span>
+        <img class="antes-img" src="assets/terminado/hoy-0313.jpg" alt="El terreno hoy, foto de dron" loading="lazy">
+        <img class="despues" src="assets/terminado/e3-0313.jpg" alt="El proyecto terminado sobre la misma foto" loading="lazy">
+        <div class="linea" aria-hidden="true"></div>
+        <input type="range" min="0" max="100" value="50" aria-label="Comparar hoy con el proyecto terminado">
+        <span class="m i">Hoy</span><span class="m d">Terminado</span>
       </div>
       <div class="marco comparar" data-verify-unit="plano" data-valor="50">
         <span class="rotulo">Desliza: hoy y con el proyecto · norte a la izquierda</span>
@@ -398,7 +441,36 @@
     const obsV = new IntersectionObserver((es) => es.forEach((e) => { const v = e.target; if (e.isIntersecting) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); }), {threshold: 0.3});
     document.querySelectorAll(".camino video").forEach((v) => obsV.observe(v));
     // antes / después
-    const cmp = document.querySelector(".comparar");
+    // hoy / terminado: tres vistas
+    const ht = document.getElementById("hoy-terminado");
+    const moverHT = (v) => { ht.querySelector(".despues").style.clipPath = `inset(0 0 0 ${v}%)`; ht.querySelector(".linea").style.left = v + "%"; ht.dataset.valor = v; };
+    ht.querySelector("input").addEventListener("input", (e) => moverHT(+e.target.value));
+    document.querySelectorAll(".vistas-foto button").forEach((b) => b.addEventListener("click", () => {
+      document.querySelectorAll(".vistas-foto button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      const n = b.dataset.vista;
+      ht.querySelector(".antes-img").src = `assets/terminado/hoy-${n}.jpg`;
+      ht.querySelector(".despues").src = `assets/terminado/e3-${n}.jpg`;
+      ht.dataset.vista = n;
+    }));
+    const obsHT = new IntersectionObserver((es) => { if (!es[0].isIntersecting || quieto) return; obsHT.disconnect(); const t0 = performance.now(); const paso = (t) => { const k = (t - t0) / 1800; if (k >= 1) { moverHT(50); return; } moverHT(Math.round(50 - 35 * Math.sin(k * Math.PI * 2))); requestAnimationFrame(paso); }; requestAnimationFrame(paso); }, {threshold: 0.5});
+    obsHT.observe(ht);
+    // proyección por etapas: botones y un recorrido automático la primera vez que se ve
+    const et = document.getElementById("etapas");
+    const verEtapa = (e) => {
+      et.querySelectorAll("img").forEach((im) => im.classList.toggle("ver", +im.dataset.e === e));
+      document.querySelectorAll(".pasos-etapa button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.e === e)));
+      et.dataset.etapa = e;
+    };
+    let auto = null;
+    document.querySelectorAll(".pasos-etapa button").forEach((b) => b.addEventListener("click", () => { clearInterval(auto); verEtapa(+b.dataset.e); }));
+    const obsE = new IntersectionObserver((es) => {
+      if (!es[0].isIntersecting || quieto) return;
+      obsE.disconnect();
+      let e = 0; verEtapa(0);
+      auto = setInterval(() => { e += 1; verEtapa(e); if (e >= 3) clearInterval(auto); }, 1700);
+    }, {threshold: 0.5});
+    obsE.observe(et);
+    const cmp = document.querySelector(".comparar:not(.foto)");
     const mover = (v) => { cmp.querySelector(".despues").style.clipPath = `inset(0 0 0 ${v}%)`; cmp.querySelector(".linea").style.left = v + "%"; cmp.dataset.valor = v; };
     cmp.querySelector("input").addEventListener("input", (e) => mover(+e.target.value));
     // un vaivén corto la primera vez que se ve, para que se note que se desliza
