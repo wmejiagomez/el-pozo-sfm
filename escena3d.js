@@ -374,6 +374,26 @@
     });
     cont.dataset.linderoFuera = String(fuera);
   }
+  // Maqueta blanca: la plaza se ve como esquema (volúmenes claros con aristas), no como diseño
+  // terminado. Se hace aquí, después de armarla, para no tocar las fases de obra.
+  function maquetaBlanca() {
+    const blanco = new THREE.MeshStandardMaterial({color: "#f3f1ea", roughness: 0.92});
+    const piso = new THREE.MeshStandardMaterial({color: "#d9dcd6", roughness: 0.95});
+    const verde = new THREE.MeshStandardMaterial({color: "#a9cf9f", roughness: 0.9, flatShading: true});
+    const acento = new THREE.MeshStandardMaterial({color: "#e4573d", roughness: 0.8});
+    const arista = new THREE.LineBasicMaterial({color: "#43524a", transparent: true, opacity: 0.5});
+    plaza.traverse((m) => {
+      if (!m.isMesh || m.userData.sinLindero) return;
+      const g = m.geometry, t = g.type;
+      if (t === "IcosahedronGeometry") { m.material = verde; return; }
+      const prm = g.parameters || {};
+      const col = m.material && m.material.color ? m.material.color.getHexString() : "";
+      if (col === "c8322a") m.material = acento;
+      else if (prm.height !== undefined && prm.height <= 0.4 && (prm.width > 20 || prm.depth > 20)) m.material = piso;
+      else m.material = blanco;
+      if (t === "BoxGeometry" && Math.max(prm.width || 0, prm.height || 0, prm.depth || 0) > 3) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g), arista));
+    });
+  }
   let progresoObra = 1;
   function construir(p) {
     progresoObra = p;
@@ -382,6 +402,7 @@
       f.fn(k);
     }
   }
+  maquetaBlanca();
   construir(1);
   verificarLindero();
 
