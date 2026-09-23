@@ -74,6 +74,22 @@
   .pasos-etapa button[aria-pressed="true"] { border-color: var(--arcilla); box-shadow: 0 0 0 2px rgba(228,87,61,.18); }
   .pasos-etapa button[aria-pressed="true"] b { color: var(--arcilla); }
   @media (max-width: 700px) { .pasos-etapa { grid-template-columns: 1fr 1fr; } }
+  /* Recorrido en cámara rápida */
+  .tl-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+  .tl-tabs button { border: 1px solid var(--linea); background: #fff; font: 600 14px Inter, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+  .tl-tabs button[aria-pressed="true"] { background: var(--bosque); color: #fff; border-color: var(--bosque); }
+  .tl { aspect-ratio: 16 / 9; background: #0e1a13; }
+  .tl video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tl-vel { position: absolute; left: 12px; top: 12px; background: var(--sol); color: var(--tinta); font: 800 15px Inter, sans-serif; padding: 5px 11px; border-radius: 8px; }
+  .tl-barra { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: rgba(255,255,255,.25); }
+  .tl-avance { height: 100%; width: 0; background: var(--arcilla); }
+  .tl-reloj { position: absolute; left: 12px; bottom: 16px; color: #fff; font: 600 14px Inter, sans-serif; text-shadow: 0 1px 6px rgba(0,0,0,.7); font-variant-numeric: tabular-nums; }
+  .tl-play { position: absolute; right: 12px; bottom: 16px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font: 700 13px Inter, sans-serif; cursor: pointer; }
+  .tl-mapa { position: absolute; right: 12px; top: 12px; width: min(30%, 220px); aspect-ratio: 1; background: rgba(14,26,19,.72); border-radius: 12px; }
+  .tl-mapa .lote { fill: rgba(255,255,255,.14); stroke: rgba(255,255,255,.35); stroke-width: .6; }
+  .tl-mapa .cg { fill: rgba(228,87,61,.35); stroke: #e4573d; stroke-width: 1.2; }
+  .tl-mapa .ruta { fill: none; stroke: var(--sol); stroke-width: 1.6; stroke-linejoin: round; }
+  .tl-mapa .dron { fill: #fff; stroke: var(--arcilla); stroke-width: 1.5; }
   /* El camino en vídeo */
   .camino { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 26px; counter-reset: paso; }
   .camino figure { margin: 0; position: relative; }
@@ -211,7 +227,7 @@
     <nav aria-label="Secciones">
       <a href="#proyecto">Proyecto</a>
       <a href="#recorrido3d">3D</a>
-      <a href="#camino">Camino</a>
+      <a href="#camino">Recorrido</a>
       <a href="#proyeccion">Proyección</a>
       <a href="#fotos">Fotos</a>
       <a href="#recorrido">360</a>
@@ -262,12 +278,21 @@
 
   <section id="camino">
     <div class="envoltura">
-      <div class="etiqueta">El camino</div>
-      <h2>De la ciudad a El Pozo</h2>
-      <div class="camino" data-verify-unit="camino">
-        <figure><video src="assets/clips/pueblo_01_salida_urbana.mp4" poster="assets/clips/pueblo_01_salida_urbana.jpg" muted loop playsinline preload="none"></video><figcaption>La ciudad</figcaption></figure>
-        <figure><video src="assets/clips/pueblo_03_transicion_suburbana.mp4" poster="assets/clips/pueblo_03_transicion_suburbana.jpg" muted loop playsinline preload="none"></video><figcaption>La vía</figcaption></figure>
-        <figure><video src="assets/clips/pueblo_07_llegada_proyecto.mp4" poster="assets/clips/pueblo_07_llegada_proyecto.jpg" muted loop playsinline preload="none"></video><figcaption>El Pozo</figcaption></figure>
+      <div class="etiqueta">El recorrido completo</div>
+      <h2>Todo el camino, en cámara rápida</h2>
+      <p class="sub">Los vuelos del dron completos, acelerados.</p>
+      <div class="tl-tabs" role="group" aria-label="Recorrido">
+        <button type="button" data-tl="ciudad" aria-pressed="true">De la ciudad al proyecto</button>
+        <button type="button" data-tl="entrada" aria-pressed="false">Por la entrada</button>
+        <button type="button" data-tl="vuelo" aria-pressed="false">Vuelo sobre el terreno</button>
+      </div>
+      <div class="marco tl" id="timelapse" data-verify-unit="timelapse" data-tl="ciudad">
+        <video muted playsinline preload="metadata" poster="assets/timelapse/ciudad.jpg"></video>
+        <span class="tl-vel">×6</span>
+        <svg class="tl-mapa" viewBox="0 0 10 10" aria-hidden="true" hidden></svg>
+        <div class="tl-barra"><div class="tl-avance"></div></div>
+        <span class="tl-reloj">0:00 de 3:00 reales</span>
+        <button type="button" class="tl-play" aria-label="Pausar">❚❚</button>
       </div>
     </div>
   </section>
@@ -417,6 +442,7 @@
 <script src="visor360.js"></script>
 <script src="mapa.js"></script>
 <script>
+  const D = window.EL_POZO;
   (() => {
     const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
     // cifras que cuentan hasta su valor al verse
@@ -441,6 +467,55 @@
     const obsV = new IntersectionObserver((es) => es.forEach((e) => { const v = e.target; if (e.isIntersecting) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); }), {threshold: 0.3});
     document.querySelectorAll(".camino video").forEach((v) => obsV.observe(v));
     // antes / después
+    // recorrido en cámara rápida: tres vuelos completos acelerados; el vuelo sobre el terreno
+    // lleva un minimapa con la posición del dron sacada del GPS del vídeo (SRT)
+    (() => {
+      const caja = document.getElementById("timelapse");
+      const v = caja.querySelector("video");
+      const TL = {ciudad: {vel: 6, real: 180}, entrada: {vel: 8, real: 229}, vuelo: {vel: 7, real: 198}};
+      const mapa = caja.querySelector(".tl-mapa");
+      let ruta = null, dron = null;
+      const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+      const poner = (k) => {
+        caja.dataset.tl = k;
+        v.src = `assets/timelapse/${k}.mp4`; v.poster = `assets/timelapse/${k}.jpg`;
+        caja.querySelector(".tl-vel").textContent = "×" + TL[k].vel;
+        mapa.hidden = k !== "vuelo";
+        document.querySelectorAll(".tl-tabs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tl === k)));
+        if (visto) { v.load(); v.addEventListener("canplay", () => v.play().catch(() => {}), {once: true}); }
+      };
+      document.querySelectorAll(".tl-tabs button").forEach((b) => b.addEventListener("click", () => poner(b.dataset.tl)));
+      caja.querySelector(".tl-play").addEventListener("click", (e) => { if (v.paused) { v.play(); e.target.textContent = "❚❚"; } else { v.pause(); e.target.textContent = "▶"; } });
+      v.addEventListener("ended", () => { v.currentTime = 0; v.play().catch(() => {}); });
+      v.addEventListener("timeupdate", () => {
+        const T = TL[caja.dataset.tl], k = v.duration ? v.currentTime / v.duration : 0;
+        caja.querySelector(".tl-avance").style.width = (k * 100).toFixed(1) + "%";
+        caja.querySelector(".tl-reloj").textContent = `${mmss(k * T.real)} de ${mmss(T.real)} reales`;
+        if (ruta && caja.dataset.tl === "vuelo") {
+          const t = v.currentTime * T.vel;
+          let i = ruta.findIndex((q) => q[0] >= t); if (i < 0) i = ruta.length - 1;
+          dron.setAttribute("cx", ruta[i][1]); dron.setAttribute("cy", -ruta[i][2]);
+        }
+      });
+      // minimapa: el terreno, los solares y la ruta del dron
+      fetch("assets/timelapse/vuelo_ruta.json").then((r) => r.json()).then((d) => {
+        ruta = d.t_x_y_alt;
+        const NS = "http://www.w3.org/2000/svg";
+        const pts = [...D.plano.terreno, ...ruta.map((q) => [q[1], q[2]])];
+        const xs = pts.map((q) => q[0]), ys = pts.map((q) => -q[1]);
+        const x0 = Math.min(...xs) - 20, x1 = Math.max(...xs) + 20, y0 = Math.min(...ys) - 20, y1 = Math.max(...ys) + 20, l = Math.max(x1 - x0, y1 - y0);
+        mapa.setAttribute("viewBox", `${(x0 + x1 - l) / 2} ${(y0 + y1 - l) / 2} ${l} ${l}`);
+        mapa.style.setProperty("--k", l / 200);
+        const el = (tag, at) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); mapa.appendChild(e); return e; };
+        const esc = l / 200;
+        D.plano.poligonos.forEach((q) => el("polygon", {points: q.p.map(([x, n]) => `${x},${-n}`).join(" "), class: q.grande ? "cg" : "lote", "stroke-width": (q.grande ? 1.2 : 0.6) * esc}));
+        el("polyline", {points: ruta.map((q) => `${q[1]},${-q[2]}`).join(" "), class: "ruta", "stroke-width": 1.6 * esc});
+        dron = el("circle", {r: 4 * esc, class: "dron", "stroke-width": 1.5 * esc, cx: ruta[0][1], cy: -ruta[0][2]});
+      });
+      let visto = false;
+      new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!visto) { visto = true; if (!v.src) poner("ciudad"); } v.play().catch(() => {}); } else v.pause(); }, {threshold: 0.4}).observe(caja);
+      caja.dataset.listo = "si";
+    })();
     // hoy / terminado: tres vistas
     const ht = document.getElementById("hoy-terminado");
     const moverHT = (v) => { ht.querySelector(".despues").style.clipPath = `inset(0 0 0 ${v}%)`; ht.querySelector(".linea").style.left = v + "%"; ht.dataset.valor = v; };

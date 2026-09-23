@@ -10,7 +10,7 @@
     salida: {nombre: "Carreteras", color: "#e4573d"},
     super: {nombre: "Supermercados", color: "#2f7de1"},
     plaza: {nombre: "Tiendas y plazas", color: "#8a5cd6"},
-    centro: {nombre: "Centro", color: "#12301f"},
+    centro: {nombre: "Lugares emblemáticos", color: "#12301f"},
     servicio: {nombre: "Salud y deporte", color: "#1f9e8a"},
     banco: {nombre: "Bancos", color: "#b07d12"},
     educacion: {nombre: "Educación", color: "#d0487c"},
