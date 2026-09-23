@@ -113,6 +113,52 @@
   @media (max-width: 800px) { .dos { grid-template-columns: 1fr; } }
   footer { padding-block: 26px; color: var(--gris); font-size: 12px; }
   footer p { margin: 3px 0; }
+  /* Mapa de ubicación */
+  .mapa-barra { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: 22px; }
+  .escenarios { display: inline-flex; background: #fff; border: 1px solid var(--linea); border-radius: 999px; padding: 3px; }
+  .escenarios button { border: 0; background: transparent; font: 600 14px Inter, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; color: var(--gris); }
+  .escenarios button[aria-pressed="true"] { background: var(--bosque); color: #fff; }
+  #mapa[data-escenario="circ"] .escenarios button[aria-pressed="true"] { background: var(--sol); color: var(--tinta); }
+  .filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+  .filtros button { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--linea); background: #fff; font: 500 13px Inter, sans-serif; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+  .filtros button[aria-pressed="false"] { opacity: .45; }
+  .filtros i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .mapa-cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; margin-top: 14px; align-items: start; }
+  .lienzo-mapa { margin-top: 0; height: min(68vh, 580px); background: #eef3ef; }
+  .mapa-svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; --k: 10; }
+  .mapa-svg .via polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .mapa-svg .via.res polyline { stroke: #fbfcfb; stroke-width: 1.2px; }
+  .mapa-svg .via.sec polyline { stroke: #ffffff; stroke-width: 2px; }
+  .mapa-svg .via.prin polyline { stroke: #c9d3cc; stroke-width: 3.5px; }
+  .mapa-svg .circ { fill: none; stroke: var(--sol); stroke-width: 5px; stroke-dasharray: 10 6; vector-effect: non-scaling-stroke; }
+  .mapa-svg .pozo { fill: rgba(228,87,61,.35); stroke: var(--arcilla); stroke-width: 2px; vector-effect: non-scaling-stroke; }
+  .mapa-svg .ruta { fill: none; stroke-width: 5px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .mapa-svg .ruta.hoy { stroke: var(--bosque); }
+  .mapa-svg .ruta.hoy.tenue { stroke: #8a968e; stroke-dasharray: 4 5; stroke-width: 3px; }
+  .mapa-svg .ruta.futuro { stroke: #d99a14; }
+  .mapa-svg .punto { cursor: pointer; }
+  .mapa-svg .punto circle { r: calc(var(--k) * 11px); stroke: #fff; stroke-width: 2px; vector-effect: non-scaling-stroke; }
+  .mapa-svg .punto.activo circle { r: calc(var(--k) * 15px); }
+  .mapa-svg .num { fill: #fff; font: 700 calc(var(--k) * 11px) Inter, sans-serif; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .mapa-svg .marca-pozo { r: calc(var(--k) * 9px); fill: var(--arcilla); stroke: #fff; stroke-width: 3px; vector-effect: non-scaling-stroke; }
+  .mapa-svg .rotulo-pozo { font: 800 calc(var(--k) * 15px) "Bricolage Grotesque", sans-serif; fill: var(--tinta); paint-order: stroke; stroke: #fff; stroke-width: 4px; vector-effect: non-scaling-stroke; transform: translate(calc(var(--k) * 14px), calc(var(--k) * 5px)); }
+  .mapa-svg .rotulo-circ { font: 700 calc(var(--k) * 12px) Inter, sans-serif; fill: #9a6a06; paint-order: stroke; stroke: #fff; stroke-width: 4px; vector-effect: non-scaling-stroke; transform: translateY(calc(var(--k) * -12px)); }
+  .zoom { position: absolute; right: 12px; top: 12px; display: grid; gap: 6px; z-index: 2; }
+  .zoom button { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--linea); background: #fff; font: 700 18px Inter, sans-serif; cursor: pointer; }
+  .ficha-mapa { position: absolute; left: 12px; bottom: 12px; right: 60px; max-width: 380px; background: #fff; border-radius: 12px; padding: 12px 14px; box-shadow: 0 6px 20px rgba(0,0,0,.12); display: grid; gap: 2px; font-size: 14px; }
+  .ficha-mapa:empty { display: none; }
+  .ficha-mapa b { font-size: 16px; }
+  .ficha-mapa span { color: var(--gris); }
+  .ficha-mapa .comp { color: #9a6a06; font-weight: 600; }
+  .lugares { list-style: none; margin: 0; padding: 0; max-height: min(68vh, 580px); overflow-y: auto; display: grid; gap: 6px; }
+  .lugares button { width: 100%; display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center; text-align: left; border: 1px solid var(--linea); background: #fff; border-radius: 10px; padding: 9px 10px; font: 500 14px Inter, sans-serif; color: var(--tinta); cursor: pointer; }
+  .lugares li.activo button { border-color: var(--bosque); box-shadow: 0 0 0 2px rgba(18,48,31,.15); }
+  .lugares .n { width: 24px; height: 24px; border-radius: 50%; color: #fff; display: grid; place-items: center; font: 700 12px Inter, sans-serif; }
+  .lugares .t { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .lugares .t small { color: var(--gris); font-weight: 500; margin-left: 4px; }
+  .lugares .t em { font-style: normal; color: #9a6a06; font-size: 12px; margin-left: 4px; }
+  .nota-mapa { font-size: 12px; color: var(--gris); margin: 12px 0 0; }
+  @media (max-width: 900px) { .mapa-cuerpo { grid-template-columns: 1fr; } .lienzo-mapa { height: 62vh; } .lugares { max-height: none; } }
 </style>
 </head>
 <body>
@@ -223,17 +269,27 @@
   </section>
 
   <section id="ubicacion">
-    <div class="envoltura dos">
-      <div>
-        <div class="etiqueta">Ubicación</div>
-        <h2>Cerca de todo</h2>
-        <ul class="lista">
-          <li><span>Circunvalación</span><b>&lt;300 m</b></li>
-          <li><span>Parque Duarte</span><b>10 min</b></li>
-          <li><span>Supermercados Bravo</span><b>10 min</b></li>
-        </ul>
+    <div class="envoltura">
+      <div class="etiqueta">Ubicación</div>
+      <h2>Cerca de todo</h2>
+      <p class="sub">Toca un lugar para ver la ruta en carro desde El Pozo.</p>
+      <div id="mapa" data-verify-unit="mapa" data-state="cargando" data-escenario="hoy" data-total="0" data-elegido="">
+        <div class="mapa-barra">
+          <div class="escenarios" role="group" aria-label="Escenario">
+            <button type="button" data-escenario="hoy" aria-pressed="true">Hoy</button>
+            <button type="button" data-escenario="circ" aria-pressed="false">Con la Circunvalación</button>
+          </div>
+          <div class="filtros" role="group" aria-label="Tipos de lugar"></div>
+        </div>
+        <div class="mapa-cuerpo">
+          <div class="marco lienzo-mapa">
+            <div class="zoom"><button type="button" data-zoom="mas" aria-label="Acercar">+</button><button type="button" data-zoom="menos" aria-label="Alejar">−</button><button type="button" data-zoom="todo" aria-label="Ver todo">⤢</button></div>
+            <div class="ficha-mapa" aria-live="polite"></div>
+          </div>
+          <ol class="lugares"></ol>
+        </div>
+        <p class="nota-mapa">Rutas en carro por las vías abiertas (OpenStreetMap y OSRM). La Circunvalación está en obra: con ella los tiempos son un estimado a 60 km/h, suponiendo un acceso cerca del proyecto.</p>
       </div>
-      <div class="hueco" data-hueco="mapa" style="margin-top:0;min-height:220px"><b>Aquí iría el mapa</b>Con la ruta desde la ciudad y los lugares cercanos.</div>
     </div>
   </section>
 
@@ -269,6 +325,7 @@
 <script src="datos.js"></script>
 <script src="vista3d.js"></script>
 <script src="visor360.js"></script>
+<script src="mapa.js"></script>
 
 </body>
 </html>
