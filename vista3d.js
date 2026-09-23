@@ -102,11 +102,16 @@
     return {el, pos: P(x, n, 30)};
   });
 
+  let tocado = false;
+  control.addEventListener("start", () => (tocado = true));
+  const inicial = camara.position.clone().sub(control.target);
   const medir = () => {
     const w = cont.clientWidth, h = cont.clientHeight;
     render.setSize(w, h, false);
     camara.aspect = w / h;
     camara.updateProjectionMatrix();
+    // en pantallas estrechas (móvil) la cámara se aleja para que quepa el proyecto entero
+    if (!tocado) camara.position.copy(control.target).add(inicial.clone().multiplyScalar(Math.max(1, Math.pow(1.4 / camara.aspect, 0.85))));
   };
   new ResizeObserver(medir).observe(cont);
   medir();
