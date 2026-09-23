@@ -61,7 +61,7 @@
     g.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
     return g;
   }
-  const ZCOL = {comercial: "#e4573d", residencial: "#4f8fe8", mixto: "#f0b43c", verde: "#6cc070", plaza: "#f2c29a", apartamentos: "#f0cf55", escuela: "#a996e8"};
+  const ZCOL = {comercial: "#8b3dff", residencial: "#4f8fe8", mixto: "#f0b43c", verde: "#6cc070", plaza: "#f2c29a", apartamentos: "#f0cf55", escuela: "#a996e8"};
 
   function construirPlano(pano) {
     capaPlano.clear();
@@ -76,12 +76,16 @@
       const dirs = fino.map(([x, n]) => direccion(pano, x, n));
       const geo = new THREE.BufferGeometry().setFromPoints(dirs.map((d) => d.clone().multiplyScalar(40)));
       geo.setIndex(tri.flat());
-      capaPlano.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: ZCOL[pol.zona], transparent: true, opacity: pol.zona === "comercial" ? 0.12 : 0.1, side: THREE.DoubleSide, depthTest: false})));
+      capaPlano.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: ZCOL[pol.zona], transparent: true, opacity: pol.zona === "comercial" ? 0.3 : 0.1, side: THREE.DoubleSide, depthTest: false})));
       const segs = dirs.map((d, i) => [d, dirs[(i + 1) % dirs.length]]);
       (pol.zona === "comercial" ? bordesCG : bordes).push(...segs);
     }
     capaPlano.add(new THREE.Mesh(cintas(bordes, 0.0022, 39.8), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthTest: false})));
-    capaPlano.add(new THREE.Mesh(cintas(bordesCG, 0.0045, 39.7), new THREE.MeshBasicMaterial({color: 0xe4573d, side: THREE.DoubleSide, depthTest: false})));
+    // plaza en morado, con un halo blanco para que contraste con la tierra rojiza
+    const halo = new THREE.Mesh(cintas(bordesCG, 0.009, 39.6), new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, depthTest: false}));
+    const borde = new THREE.Mesh(cintas(bordesCG, 0.0055, 39.5), new THREE.MeshBasicMaterial({color: 0x8b3dff, side: THREE.DoubleSide, depthTest: false}));
+    halo.renderOrder = 5; borde.renderOrder = 6;
+    capaPlano.add(halo, borde);
     // Circunvalación sobre el suelo
     D.vias.filter((v) => v.c === "circ").forEach((v) => {
       const dirs = v.p.map(([x, n]) => direccion(pano, x, n));
