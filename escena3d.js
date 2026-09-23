@@ -18,6 +18,10 @@
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if (THREE.ColorManagement) THREE.ColorManagement.legacyMode = false;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.95;
   cont.prepend(renderer.domElement);
 
   const CIELO = new THREE.Color("#dde5dd");
@@ -32,8 +36,17 @@
   controles.addEventListener("start", () => { manual = true; });
   let manual = false;
 
-  escena.add(new THREE.HemisphereLight(0xffffff, 0x8f9a86, 0.55));
-  const sol = new THREE.DirectionalLight(0xfff1dc, 0.85);
+  escena.add(new THREE.HemisphereLight(0xffffff, 0x8f9a86, 0.35));
+  if (THREE.RGBELoader) {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    new THREE.RGBELoader().load("assets/tex/cielo_1k.hdr", (hdr) => {
+      const env = pmrem.fromEquirectangular(hdr).texture;
+      escena.environment = env;
+      hdr.mapping = THREE.EquirectangularReflectionMapping;
+      hdr.dispose && null;
+    });
+  }
+  const sol = new THREE.DirectionalLight(0xfff1dc, 1.6);
   sol.position.set(-700, 1100, 500);
   sol.castShadow = true;
   sol.shadow.mapSize.set(2048, 2048);
@@ -42,6 +55,16 @@
   escena.add(sol);
 
   const P = (x, n, y = 0) => new THREE.Vector3(x, y, -n);
+  const cargaTex = new THREE.TextureLoader();
+  const tex = (nombre, rep, color = true) => {
+    const t = cargaTex.load(`assets/tex/${nombre}.jpg`);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(rep, rep);
+    if (color) t.encoding = THREE.sRGBEncoding;
+    t.anisotropy = 8;
+    return t;
+  };
+  const pbr = (nombre, rep, extra = {}) => new THREE.MeshStandardMaterial({map: tex(nombre + "_color", rep), normalMap: tex(nombre + "_normal", rep, false), roughness: 0.85, ...extra});
   const C0 = D.plano.centro;
   const KC = 111320 * Math.cos((C0[0] * Math.PI) / 180);
   const aM = (lat, lon) => [(lon - C0[1]) * KC, (lat - C0[0]) * 111320];
@@ -53,7 +76,7 @@
   const g = lienzo.getContext("2d");
   const sx = 4096 / (EXT.x1 - EXT.x0), sn = 4096 / (EXT.n1 - EXT.n0);
   const cx = (x) => (x - EXT.x0) * sx, cn = (n) => (EXT.n1 - n) * sn;
-  g.fillStyle = "#c3d0b8";
+  g.fillStyle = "#94a58a";
   g.fillRect(0, 0, 4096, 4096);
   const ANCHO = {res: 9, sec: 16, prin: 26, circ: 34};
   for (const pasada of [0, 1]) {
@@ -63,30 +86,42 @@
         v.p.forEach(([x, n], i) => (i ? g.lineTo(cx(x), cn(n)) : g.moveTo(cx(x), cn(n))));
         g.lineCap = g.lineJoin = "round";
         g.lineWidth = (ANCHO[c] + (pasada ? 0 : 8)) * sx;
-        g.strokeStyle = pasada ? "#ffffff" : "#8f9a88";
+        g.strokeStyle = pasada ? "#e9ebe4" : "#5f6b58";
         g.stroke();
       }
     }
   }
   const texSuelo = new THREE.CanvasTexture(lienzo);
   texSuelo.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  texSuelo.encoding = THREE.sRGBEncoding;
   const suelo = new THREE.Mesh(new THREE.PlaneGeometry(EXT.x1 - EXT.x0, EXT.n1 - EXT.n0), new THREE.MeshStandardMaterial({map: texSuelo, roughness: 1}));
   suelo.rotation.x = -Math.PI / 2;
   suelo.position.set((EXT.x0 + EXT.x1) / 2, 0, -(EXT.n0 + EXT.n1) / 2);
   suelo.receiveShadow = true;
   escena.add(suelo);
+  {
+    const orto = cargaTex.load("assets/ortofoto.jpg");
+    orto.encoding = THREE.sRGBEncoding;
+    orto.anisotropy = 8;
+    const plano = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600), new THREE.MeshStandardMaterial({map: orto, alphaMap: cargaTex.load("assets/ortofoto_alfa.png"), transparent: true, roughness: 1, depthWrite: false}));
+    plano.rotation.x = -Math.PI / 2;
+    plano.position.set(0, 0.15, 100);
+    plano.receiveShadow = true;
+    plano.renderOrder = 1;
+    escena.add(plano);
+  }
 
   // Terreno del proyecto (arena), bajo los lotes
   const ESQ = D.plano.terreno;  // contorno del terreno a escala real (1:950)
   const forma = (pts) => { const s = new THREE.Shape(); pts.forEach(([x, n], i) => (i ? s.lineTo(x, n) : s.moveTo(x, n))); return s; };
-  const losa = new THREE.Mesh(new THREE.ExtrudeGeometry(forma(ESQ), {depth: 0.6, bevelEnabled: false}).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({color: "#d9c9a6", roughness: 1}));
+  const losa = new THREE.Mesh(new THREE.ExtrudeGeometry(forma(ESQ), {depth: 0.6, bevelEnabled: false}).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({color: "#d9c9a6", roughness: 1, transparent: true, opacity: 0.18, depthWrite: false}));
   losa.receiveShadow = true;
   escena.add(losa);
 
   // ---- Lotes del plan maestro
   const ZONA = {
     comercial: {color: "#e4573d", h: 7},
-    residencial: {color: "#5b93e6", h: 3},
+    residencial: {color: "#4f86d9", h: 1.2},
     verde: {color: "#7fbf6a", h: 0.8},
     plaza: {color: "#efc9a5", h: 1},
     apartamentos: {color: "#f0cf55", h: 14},
@@ -97,7 +132,7 @@
   for (const p of D.plano.poligonos) {
     const z = p.grande ? {color: "#c93f2a", h: 2.5} : ZONA[p.zona];
     const geo = new THREE.ExtrudeGeometry(forma(p.p), {depth: z.h, bevelEnabled: false}).rotateX(-Math.PI / 2);
-    const mat = new THREE.MeshStandardMaterial({color: z.color, roughness: 0.65, transparent: true, opacity: 1});
+    const mat = p.grande ? pbr("hormigon", 0.05, {color: "#d8d4cc"}) : new THREE.MeshStandardMaterial({color: z.color, roughness: 0.65, transparent: true, opacity: 0.45});
     const m = new THREE.Mesh(geo, mat);
     m.castShadow = m.receiveShadow = true;
     m.scale.y = 0.001;
@@ -173,7 +208,7 @@
     const suave = (k) => k * k * (3 - 2 * k);
 
     // 1. Nivelación: la losa pasa de tierra a hormigón
-    const losaP = caja(108, 0.6, 182, M("#8a6a4a"), 0, 2.6, 0);
+    const losaP = caja(108, 0.6, 182, pbr("hormigon", 12, {color: "#8a6a4a"}), 0, 2.6, 0);
     const tierra = new THREE.Color("#8a6a4a"), hormigon = new THREE.Color("#b9b6ae");
     fase(0, 0.1, (k) => { losaP.scale.y = Math.max(0.01, k); losaP.material.color.copy(tierra).lerp(hormigon, k); });
 
@@ -211,7 +246,7 @@
     });
     fase(0.36, 0.48, (k) => cerchas.forEach((g, i) => { const q = Math.min(1, Math.max(0, k * 1.5 - i / cerchas.length * 0.5)); g.scale.z = Math.max(0.001, suave(q)); g.visible = q > 0.02; }));
     // 5. Cubierta: paneles que se colocan de un extremo al otro
-    const techo = M("#d9dcdd", {metalness: 0.35, roughness: 0.5, side: THREE.DoubleSide});
+    const techo = pbr("zinc", 4, {color: "#dfe3e6", metalness: 0.55, roughness: 0.45, side: THREE.DoubleSide});
     const paneles = [];
     const mitad = (Z1 - Z0) / 2, zc = (Z0 + Z1) / 2, angT = Math.atan2(CUMBRE - ALTO, mitad), larT = Math.hypot(mitad, CUMBRE - ALTO) + 1.5;
     for (let i = 0; i < NX - 1; i++) {
@@ -227,13 +262,13 @@
     }
     fase(0.48, 0.62, (k) => paneles.forEach((p, i) => { const q = k * paneles.length - i; p.visible = q > 0; p.position.y = 3.2 + (ALTO + CUMBRE) / 2 + 0.6 + Math.max(0, 1 - q) * 18; }));
     // 6. Cerramientos y fachada alta con marquesina
-    const muro = M("#ece8df");
+    const muro = pbr("fachada", 6, {color: "#f2eee6"});
     const muros = [
       caja(X1 - X0, ALTO, 0.4, muro, 0, 3.2 + ALTO / 2, Z0),
       caja(0.4, ALTO, Z1 - Z0, muro, X0, 3.2 + ALTO / 2, zc),
       caja(0.4, ALTO, Z1 - Z0, muro, X1, 3.2 + ALTO / 2, zc),
     ];
-    const fachada = caja(X1 - X0 + 6, 15, 0.8, M("#f4f1ea"), 0, 3.2 + 7.5, Z1 + 0.6);
+    const fachada = caja(X1 - X0 + 6, 15, 0.8, pbr("fachada", 5, {color: "#f7f4ee"}), 0, 3.2 + 7.5, Z1 + 0.6);
     const franja = caja(X1 - X0 + 6.2, 2.2, 0.9, M("#c8322a"), 0, 3.2 + 13, Z1 + 0.7);
     const vidrio = caja(30, 4.5, 0.9, M("#5f7f96", {metalness: 0.4, roughness: 0.15}), 0, 3.2 + 2.25, Z1 + 0.75);
     const marquesina = caja(40, 0.6, 9, M("#e9e6df"), 0, 3.2 + 6, Z1 + 5);
@@ -246,7 +281,7 @@
     fachadaTodo.push(locales);
     fase(0.62, 0.76, (k) => fachadaTodo.forEach((m, i) => { const q = Math.min(1, Math.max(0, k * 1.4 - (i / fachadaTodo.length) * 0.4)); m.scale.y = Math.max(0.01, suave(q)); m.visible = q > 0.02; m.position.y = 3.2 + (m.userData.h * m.scale.y) / 2 + (m.userData.y - 3.2 - m.userData.h / 2); }));
     // 7. Parqueo: asfalto, rayas y techo para motores
-    const asfalto = caja(100, 0.3, 62, M("#3b3f42", {roughness: 0.95}), 0, 3.35, 57);
+    const asfalto = caja(100, 0.3, 62, pbr("asfalto", 10, {color: "#8d9194", roughness: 0.95}), 0, 3.35, 57);
     asfalto.scale.z = 0.01;
     const rayas = [];
     for (let fila = 0; fila < 4; fila++) {
@@ -262,7 +297,7 @@
     // 8. Paisajismo: árboles alrededor
     const arbolesP = [];
     for (let i = 0; i < 26; i++) {
-      const t = new THREE.Mesh(new THREE.ConeGeometry(3, 8, 7).translate(0, 4, 0), M("#2f6b3a"));
+      const t = new THREE.Mesh(new THREE.IcosahedronGeometry(3.2, 1).scale(1, 0.85, 1).translate(0, 5.4, 0), M("#2c5a2c", {flatShading: true}));
       const perim = i < 13 ? [-52 + i * 8.5, 3.2, 90] : [53, 3.2, -84 + (i - 13) * 13];
       t.position.set(...perim);
       t.scale.setScalar(0.001);
@@ -295,11 +330,36 @@
   construir(1);
 
   // ---- Árboles: el bosque real al oeste del terreno y los del parque
-  const arbolGeo = new THREE.ConeGeometry(1, 1, 7).translate(0, 0.5, 0);
-  const arbolMat = new THREE.MeshStandardMaterial({color: "#2d5a34", roughness: 0.9});
+  // copa redondeada y algo irregular + tronco, en una sola geometría
+  const copa = new THREE.IcosahedronGeometry(0.5, 1);
+  {
+    const pos = copa.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const k = 0.85 + 0.3 * Math.abs(Math.sin(i * 12.9898) * 43758.5453 % 1);
+      pos.setXYZ(i, pos.getX(i) * k, pos.getY(i) * k * 0.8 + 0.62, pos.getZ(i) * k);
+    }
+    copa.computeVertexNormals();
+  }
+  const tronco = new THREE.CylinderGeometry(0.05, 0.07, 0.4, 5).translate(0, 0.2, 0);
+  const arbolGeo = (() => {
+    const a = copa.toNonIndexed(), b = tronco.toNonIndexed();
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array([...a.attributes.position.array, ...b.attributes.position.array]);
+    const nor = new Float32Array([...a.attributes.normal.array, ...b.attributes.normal.array]);
+    const col = new Float32Array(pos.length);
+    for (let i = 0; i < pos.length / 3; i++) {
+      const esCopa = i < a.attributes.position.count;
+      col.set(esCopa ? [0.035, 0.1, 0.03] : [0.09, 0.06, 0.035], i * 3);
+    }
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("normal", new THREE.BufferAttribute(nor, 3));
+    g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    return g;
+  })();
+  const arbolMat = new THREE.MeshStandardMaterial({vertexColors: true, roughness: 0.9, flatShading: true});
   const semilla = ((s) => () => ((s = (s * 16807) % 2147483647) / 2147483647))(7);
   const posArboles = [];
-  for (let i = 0; i < 1600; i++) posArboles.push([-95 - semilla() * 620, -340 + semilla() * 680]);
+  // el bosque real sale en la ortofoto: aquí solo van los árboles del parque
   const dentro = ([x, n], poly) => {
     let d = false;
     for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
