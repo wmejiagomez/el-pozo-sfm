@@ -88,7 +88,7 @@
     poner("Circunvalación", direccion(pano, ci[0], ci[1]), "oro");
     const com = D.plano.poligonos.filter((q) => q.zona === "comercial").flatMap((q) => q.p);
     const cc = com.reduce((a, q) => [a[0] + q[0] / com.length, a[1] + q[1] / com.length], [0, 0]);
-    poner("Zona comercial", direccion(pano, cc[0] + 20, cc[1] + (pano.n - cc[1]) * 0.5), "coral");
+    poner("Plaza comercial", direccion(pano, cc[0] + 20, cc[1] + (pano.n - cc[1]) * 0.5), "coral");
   }
 
   function ir(pano) {
@@ -190,12 +190,23 @@
     const a1 = (rumbo - 35) * R, a2 = (rumbo + 35) * R;
     cono.setAttribute("d", `M${actual.x},${-actual.n} L${actual.x + Math.sin(a1) * 260},${-actual.n - Math.cos(a1) * 260} L${actual.x + Math.sin(a2) * 260},${-actual.n - Math.cos(a2) * 260} Z`);
     const w = cont.clientWidth, h = cont.clientHeight;
-    etiquetas.forEach((e) => {
+    // dentro del marco, por debajo de los botones de arriba, y sin pisarse
+    const medidas = etiquetas.map((e) => [e.el.offsetWidth, e.el.offsetHeight]);
+    const arriba = (cont.querySelector(".barra360").offsetHeight || 40) + 20;
+    const puestas = [];
+    etiquetas.forEach((e, i) => {
       v.copy(e.dir).multiplyScalar(30).project(camara);
-      const ok = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
+      let ok = v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
+      const [ew, eh] = medidas[i];
+      const x = Math.min(w - 8 - ew / 2, Math.max(8 + ew / 2, ((v.x + 1) / 2) * w));
+      const y = Math.min(h - 52 - eh / 2, Math.max(arriba + eh / 2, ((1 - v.y) / 2) * h));
+      const r = {x0: x - ew / 2, x1: x + ew / 2, y0: y - eh / 2, y1: y + eh / 2};
+      if (ok && puestas.some((q) => r.x0 < q.x1 + 4 && r.x1 > q.x0 - 4 && r.y0 < q.y1 + 4 && r.y1 > q.y0 - 4)) ok = false;
+      if (ok) puestas.push(r);
       e.el.style.opacity = ok ? 1 : 0;
       e.el.style.pointerEvents = ok ? "auto" : "none";
-      e.el.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(-50%, -50%)`;
+      if (e.el.tagName === "BUTTON") e.el.tabIndex = ok ? 0 : -1;
+      e.el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
     });
   }
   requestAnimationFrame(cuadro);

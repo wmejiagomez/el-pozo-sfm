@@ -30,7 +30,9 @@
   body { margin: 0; font-family: Inter, "Segoe UI", sans-serif; color: var(--tinta); background: var(--papel); line-height: 1.55; }
   h1, h2, h3 { font-family: "Bricolage Grotesque", Inter, sans-serif; line-height: 1.05; margin: 0; letter-spacing: -0.02em; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--sol); outline-offset: 3px; }
+  :focus-visible { outline: 3px solid var(--arcilla-2); outline-offset: 3px; }
+  .barra :focus-visible, .portada :focus-visible, .contacto :focus-visible, .controles :focus-visible, .barra360 :focus-visible, .e360:focus-visible { outline-color: var(--sol); }
+  #comercial, #maqueta { scroll-margin-top: 72px; }
   .envoltura { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
 
   /* Cabecera */
@@ -61,10 +63,11 @@
   .cifras .envoltura { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
   .cifra { padding: 34px 18px; border-left: 1px solid rgba(255,255,255,.12); }
   .cifra:first-child { border-left: 0; }
-  .cifra b { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: clamp(34px, 4vw, 48px); font-weight: 800; }
-  .cifra span { color: rgba(255,255,255,.72); font-size: 15px; }
-  .cifra.acento b { color: var(--arcilla); }
-  @media (max-width: 760px) { .cifras .envoltura { grid-template-columns: 1fr 1fr; } .cifra:nth-child(3) { border-left: 0; } .cifra { border-top: 1px solid rgba(255,255,255,.12); } }
+  .cifra b { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: clamp(34px, 3.4vw, 46px); font-weight: 800; white-space: nowrap; line-height: 1.1; margin-bottom: 6px; }
+  .cifra b small { font-size: .55em; font-weight: 600; margin-left: .12em; }
+  .cifra span { color: rgba(255,255,255,.78); font-size: 15px; }
+  .cifra.acento b { color: #ff7a5f; }
+  @media (max-width: 760px) { .cifras .envoltura { grid-template-columns: 1fr 1fr; padding: 0; } .cifra { padding: 24px 16px; } .cifra b { font-size: clamp(24px, 7.4vw, 30px); } .cifra span { font-size: 14px; } .cifra:nth-child(3) { border-left: 0; } .cifra:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.12); } }
 
   section { padding: 96px 0; }
   .antetitulo { color: var(--arcilla); font-weight: 600; font-size: 15px; margin-bottom: 12px; }
@@ -80,7 +83,12 @@
   .controles { position: absolute; left: 16px; top: 16px; display: flex; gap: 8px; flex-wrap: wrap; z-index: 3; }
   .controles button { background: rgba(13,26,19,.78); color: #fff; border: 1.5px solid rgba(255,255,255,.35); padding: 10px 16px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
   .controles button[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
-  .leyenda { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 18px; font-size: 15px; color: var(--gris); }
+  .leyenda { display: flex; gap: 8px 22px; flex-wrap: wrap; margin-top: 18px; font-size: 15px; color: var(--gris); }
+  @media (max-width: 600px) {
+    .visor { display: flex; flex-direction: column-reverse; }
+    .controles { position: static; padding: 12px; gap: 6px; background: #0d1a13; }
+    .controles button { padding: 8px 12px; font-size: 13px; }
+  }
   .leyenda i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 8px; vertical-align: -2px; }
 
   /* Zona comercial */
@@ -95,7 +103,11 @@
   .lote strong { display: block; color: var(--tinta); font-size: 16px; }
   .lote.c { border-color: rgba(228,87,61,.45); }
   .lote.c strong { color: var(--arcilla-2); }
-  .lote.grande { grid-column: span 2; background: #fff1ee; border-color: var(--arcilla); }
+  .lote.grande { grid-column: 1 / -1; background: #fff1ee; border-color: var(--arcilla); padding: 16px 18px; font-size: 15px; }
+  .lote.grande strong { font-size: 20px; }
+  .croquis { display: block; width: 100%; max-width: 420px; height: auto; margin: 0 auto 18px; }
+  .croquis text { font: 600 13px Inter, sans-serif; fill: var(--tinta); }
+  .croquis .suave { fill: var(--gris); font-weight: 500; }
   .propuesta { margin-top: 16px; padding: 14px 18px; border-left: 4px solid var(--arcilla); background: #fff1ee; border-radius: 0 12px 12px 0; font-size: 16px; }
   .lote[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); color: #fff; }
   .lote[aria-pressed="true"] strong { color: #fff; }
@@ -147,7 +159,7 @@
   .historia { padding-bottom: 40px; }
   .cabeza-historia { margin-bottom: 36px; }
   .historia-rejilla { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); max-width: 1400px; margin: 0 auto; padding-inline: 20px; }
-  .escenario { position: sticky; top: calc(76px + env(safe-area-inset-top, 0px)); height: min(78vh, 760px); border-radius: 22px; overflow: hidden; background: #dde5dd; box-shadow: 0 30px 70px rgba(18,48,31,.22); }
+  .escenario { position: sticky; top: calc(96px + env(safe-area-inset-top, 0px)); height: min(calc(100vh - 124px), 760px); border-radius: 22px; overflow: hidden; background: #dde5dd; box-shadow: 0 30px 70px rgba(18,48,31,.22); }
   .escenario canvas { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; }
   .etiquetas3d { position: absolute; inset: 0; pointer-events: none; }
   .etq { position: absolute; left: 0; top: 0; transition: opacity .4s; background: rgba(255,255,255,.95); color: var(--tinta); padding: 6px 12px; border-radius: 10px; font: 600 13px Inter, sans-serif; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
@@ -187,8 +199,8 @@
   @media (max-width: 900px) {
     .historia-rejilla { grid-template-columns: 1fr; padding-inline: 16px; }
     .escenario { position: relative; top: 0; height: 62vh; min-height: 380px; }
-    .pestanas { display: flex; gap: 6px; overflow-x: auto; padding: 12px 0 4px; }
-    .pestanas button { flex: 0 0 auto; background: #fff; color: var(--tinta); border: 1.5px solid var(--linea); padding: 9px 14px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
+    .pestanas { display: flex; gap: 6px; padding: 12px 0 4px; }
+    .pestanas button { flex: 1 1 auto; background: #fff; color: var(--tinta); border: 1.5px solid var(--linea); padding: 9px 8px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; white-space: nowrap; }
     .pestanas button[aria-pressed="true"] { background: var(--arcilla); color: #fff; border-color: var(--arcilla); }
     .pasos { padding-left: 0; }
     .paso { display: none; min-height: 0; opacity: 1; padding: 14px 0 0; }
@@ -216,7 +228,9 @@
   .pista360 { position: absolute; left: 14px; bottom: 14px; z-index: 2; background: rgba(255,255,255,.85); color: var(--tinta); font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 99px; }
   .fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px auto 0; max-width: 1040px; }
   .fotos img { width: 100%; border-radius: var(--radio); display: block; }
-  @media (max-width: 700px) { .fotos { grid-template-columns: 1fr; } .visor360 { height: 62vh; } .mini360 { width: 58px; height: 116px; } .brujula360 { right: 84px; } .pista360 { display: none; } }
+  @media (max-width: 700px) { .fotos { grid-template-columns: 1fr; } .visor360 { height: 62vh; } .mini360 { width: 58px; height: 116px; } .brujula360 { right: 84px; } .pista360 { display: none; }
+    .barra360 { left: 10px; right: 10px; top: 10px; gap: 6px; } .panos { gap: 4px; } .panos button, .conmutar { padding: 7px 11px; font-size: 12px; } }
+  #residencial + #recorrido { padding-top: 0; }
   .tesis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 36px; }
   .tesis article { background: #fff; border-radius: var(--radio); padding: 24px; display: grid; gap: 10px; align-content: start; }
   .tesis b { font-family: "Bricolage Grotesque", Inter, sans-serif; font-size: 22px; line-height: 1.15; }
@@ -233,6 +247,19 @@
   .hechos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
   .hechos li { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.85); }
   .hechos b { display: block; color: #fff; font-size: 14px; letter-spacing: .02em; margin-bottom: 2px; color: var(--sol); }
+  .render-sec { background: #0e1a17; color: #fff; }
+  .render-sec .intro, .render-sec .nota { color: rgba(255,255,255,.72); }
+  .vistas, .fases { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+  .vistas button, .fases button { background: rgba(255,255,255,.08); color: #fff; border: 1.5px solid rgba(255,255,255,.25); padding: 9px 16px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
+  .vistas button[aria-pressed="true"], .fases button[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
+  .comparador { position: relative; margin-top: 18px; aspect-ratio: 3 / 2; max-width: 100%; border-radius: var(--radio); overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,.45); user-select: none; }
+  .comparador img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .comparador .despues { position: absolute; inset: 0; clip-path: inset(0 0 0 55%); }
+  .comparador .linea { position: absolute; top: 0; bottom: 0; left: 55%; width: 3px; background: #fff; transform: translateX(-1.5px); box-shadow: 0 0 16px rgba(0,0,0,.5); pointer-events: none; }
+  .comparador .linea span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 42px; height: 42px; border-radius: 50%; background: #fff; color: var(--tinta); display: grid; place-items: center; font-weight: 700; }
+  .comparador input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .comparador .marca { position: absolute; top: 14px; font: 700 14px Inter, sans-serif; padding: 6px 12px; border-radius: 99px; background: rgba(0,0,0,.55); pointer-events: none; }
+  .comparador .hoy { left: 14px; } .comparador .prop { right: 14px; background: var(--arcilla); }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .visor .capa { transition: none; } }
 </style>
 </head>
@@ -245,6 +272,7 @@
     <a href="#maqueta">Maqueta 3D</a>
     <a href="#tesis">Por qué aquí</a>
     <a href="#areas">Áreas</a>
+    <a href="#render">Así se vería</a>
     <a href="#terreno">El terreno</a>
     <a href="#recorrido">360</a>
     <a href="#comercial">Zona comercial</a>
@@ -258,7 +286,7 @@
       <source src="assets/hero.mp4" type="video/mp4">
     </video>
     <div class="envoltura">
-      <span class="sello">A 200 m de la Circunvalación</span>
+      <span class="sello">A menos de 300 m de la Circunvalación</span>
       <h1>El Pozo</h1>
       <p>Desarrollo habitacional y comercial en la carretera Las Cejas–La Enea, San Francisco de Macorís. Presentación para inversionistas.</p>
       <div class="acciones">
@@ -270,9 +298,9 @@
 
   <div class="cifras" data-verify-unit="cifras">
     <div class="envoltura">
-      <div class="cifra"><b>129,645 m²</b><span>fase 1</span></div>
-      <div class="cifra acento"><b>20,000 m²</b><span>plaza comercial en la entrada</span></div>
-      <div class="cifra"><b>109 × 183.5 m</b><span>solar rectangular, 109 m de frente</span></div>
+      <div class="cifra"><b>129,645<small>m²</small></b><span>fase 1</span></div>
+      <div class="cifra acento"><b>20,000<small>m²</small></b><span>plaza comercial en la entrada</span></div>
+      <div class="cifra"><b>109 × 183.5<small>m</small></b><span>solar rectangular, 109 m de frente</span></div>
       <div class="cifra"><b>131</b><span>solares residenciales</span></div>
     </div>
   </div>
@@ -298,8 +326,8 @@
       </div>
       <nav class="pestanas" aria-label="Capítulos de la maqueta">
         <button type="button" data-tab="0" aria-pressed="true">Terreno</button>
-        <button type="button" data-tab="1" aria-pressed="false">Plaza comercial</button>
-        <button type="button" data-tab="2" aria-pressed="false">Cerca de todo</button>
+        <button type="button" data-tab="1" aria-pressed="false">Plaza</button>
+        <button type="button" data-tab="2" aria-pressed="false">Cercanías</button>
         <button type="button" data-tab="3" aria-pressed="false">Residencial</button>
       </nav>
       <div class="pasos">
@@ -311,7 +339,7 @@
         <article class="paso" data-cap="1">
           <span class="num">2 de 4</span>
           <h3>Así se levantaría la plaza comercial</h3>
-          <p>Un solar rectangular de 109 × 183.5 m en la entrada, con 109 m de frente a la carretera. Encima, una nave de supermercado de una planta como las de las grandes cadenas del país: 7,200 m² bajo techo, locales en línea, marquesina y parqueo para unos 130 carros. A 200 m pasa la nueva Circunvalación.</p>
+          <p>Un solar rectangular de 109 × 183.5 m en la entrada, con 109 m de frente a la carretera. Encima, una nave de supermercado de una planta como las de las grandes cadenas del país: 7,200 m² bajo techo, locales en línea, marquesina y parqueo para unos 130 carros. A menos de 300 m pasa la nueva Circunvalación.</p>
           <button type="button" class="boton claro-oscuro" data-reconstruir>Ver la obra otra vez</button>
           <p class="dato">Ilustración de la forma, no un diseño: <b>la nave, el parqueo y las fases son orientativos</b>.</p>
         </article>
@@ -338,7 +366,7 @@
       <h2>La ciudad crece hacia este lado</h2>
       <div class="tesis">
         <article>
-          <b>La Circunvalación pasa a 200 m</b>
+          <b>La Circunvalación pasa a menos de 300 m</b>
           <p>9,8 km de vía nueva por el sur de la ciudad, de cuatro carriles. En enero de 2026 Obras Públicas reportaba un 80 % de avance.</p>
         </article>
         <article>
@@ -357,14 +385,37 @@
     </div>
   </section>
 
+  <section id="render" class="render-sec">
+    <div class="envoltura">
+      <div class="antetitulo">Así se vería</div>
+      <h2>La plaza sobre las fotos reales del terreno</h2>
+      <p class="intro">Render fotorrealista de la plaza comercial montado sobre las fotos de dron del terreno, con la cámara de cada foto recuperada a partir de puntos del suelo. Arrastra la línea para comparar con el terreno de hoy o recorre la obra fase por fase.</p>
+      <div class="vistas" role="group" aria-label="Foto de dron">
+        <button type="button" data-vista="c0104" aria-pressed="true">Desde la entrada</button>
+        <button type="button" data-vista="c0107" aria-pressed="false">Vista lateral</button>
+      </div>
+      <div class="comparador" id="comparador" data-verify-unit="render" data-vista="c0104" data-fase="7">
+        <img class="antes" src="assets/render/c0104/antes.jpg" alt="Foto de dron del terreno hoy, desde la entrada">
+        <div class="despues"><img src="assets/render/c0104/fase_07.jpg" alt="Render de la plaza comercial terminada sobre la misma foto"></div>
+        <div class="linea" aria-hidden="true"><span>⇆</span></div>
+        <input type="range" min="0" max="100" value="55" aria-label="Comparar hoy con la propuesta" id="deslizador">
+        <span class="marca hoy">Hoy</span><span class="marca prop">Propuesta</span>
+      </div>
+      <div class="fases" role="group" aria-label="Fases de la obra">
+        <button type="button" data-f="0">Nivelación</button><button type="button" data-f="1">Zapatas</button><button type="button" data-f="2">Columnas</button><button type="button" data-f="3">Cerchas</button><button type="button" data-f="4">Cubierta</button><button type="button" data-f="5">Fachada</button><button type="button" data-f="6">Parqueo</button><button type="button" data-f="7" aria-pressed="true">Terminada</button>
+      </div>
+      <p class="nota">Render ilustrativo (Blender, Cycles) con texturas y cielo de Poly Haven. La nave muestra la forma de una tienda de supermercado de una planta, no es un diseño arquitectónico.</p>
+    </div>
+  </section>
+
   <section id="areas">
     <div class="envoltura dos">
       <div>
         <div class="antetitulo">Cuadro de áreas</div>
         <h2>Así se reparte la fase 1</h2>
-        <p class="intro">Cifras del Plan Maestro de Zonificación, anteproyecto de junio de 2026. La zona comercial es la más grande del proyecto.</p>
+        <p class="intro">Cifras del Plan Maestro de Zonificación, anteproyecto de junio de 2026. En ese plano la zona comercial ocupaba la franja de la carretera y era la más grande.</p>
         <p class="total"><b>100,622.39 m²</b> vendibles de <b>129,644.58 m²</b>, el 78 %.</p>
-        <p class="propuesta"><b>Propuesta:</b> un solar comercial rectangular de 20,000 m² (109 × 183.5 m) en la entrada ocupa la plaza, los apartamentos y la primera fila de solares; los demás solares comerciales pasan a residenciales. El cuadro de la derecha es el del plano de junio de 2026.</p>
+        <p class="propuesta"><b>Propuesta:</b> un solar comercial rectangular de 20,000 m² (109&nbsp;×&nbsp;183.5&nbsp;m) en la entrada ocupa la plaza, los apartamentos y la primera fila de solares; los demás solares comerciales pasan a residenciales. Las barras son las del plano de junio de 2026, antes de este cambio.</p>
       </div>
       <div class="barras" data-verify-unit="areas" id="barras"></div>
     </div>
@@ -374,7 +425,7 @@
     <div class="envoltura">
       <div class="antetitulo">El terreno</div>
       <h2>Así queda el plano sobre el terreno</h2>
-      <p class="intro">El plano maestro, colocado sobre la foto de dron. La zona comercial va de frente a la carretera, en toda la longitud del proyecto.</p>
+      <p class="intro">El plano maestro a escala real, colocado sobre la foto de dron. En rojo, el solar comercial de 20,000 m² en la entrada, de frente a la carretera.</p>
       <div class="visor" data-verify-unit="visor-plano" data-capa="comercial">
         <div class="controles" role="group" aria-label="Capas del plano">
           <button type="button" data-capa="foto" aria-pressed="false">Solo la foto</button>
@@ -403,13 +454,24 @@
         <ul class="ventajas">
           <li><b>Rectangular, 109 × 183.5 m</b>En la entrada del proyecto, donde el plano de junio tenía la plaza y los apartamentos. Propuesta.</li>
           <li><b>109 m de frente a la carretera</b>Sobre la carretera Las Cejas–La Enea, con la calle marginal delante para entrar y salir.</li>
-          <li><b>A 200 m de la Circunvalación</b>La vía nueva de 9,8 km que rodea la ciudad por el sur.</li>
+          <li><b>A menos de 300 m de la Circunvalación</b>La vía nueva de 9,8 km que rodea la ciudad por el sur.</li>
           <li><b>Para una nave de supermercado</b>Caben 7,200 m² bajo techo, locales en línea y parqueo. Como referencia, el Merca Jumbo abierto en Las Terrenas en 2026 tiene 3,800 m² de construcción y 200 parqueos.</li>
         </ul>
       </div>
       <div>
+        <svg class="croquis" viewBox="0 0 320 380" role="img" aria-label="Croquis del solar comercial: rectángulo de 109 m de frente a la carretera por 183.5 m de fondo, 20,000 m²">
+          <rect x="72" y="14" width="174.4" height="293.6" rx="4" fill="#fde3dc" stroke="#e4573d" stroke-width="3"/>
+          <text x="159" y="150" text-anchor="middle" style="font-size:22px;font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800">20,000 m²</text>
+          <text x="159" y="174" text-anchor="middle" class="suave">solar comercial</text>
+          <line x1="72" y1="320" x2="246.4" y2="320" stroke="#16211b" stroke-width="1.5"/>
+          <text x="159" y="338" text-anchor="middle">109 m de frente</text>
+          <line x1="260" y1="14" x2="260" y2="307.6" stroke="#16211b" stroke-width="1.5"/>
+          <text x="274" y="165" transform="rotate(90 274 165)" text-anchor="middle">183.5 m</text>
+          <rect x="0" y="350" width="320" height="22" fill="#d6d2c8"/>
+          <text x="160" y="366" text-anchor="middle" class="suave" style="font-size:12px">Carretera Las Cejas–La Enea</text>
+        </svg>
         <div class="rejilla" id="rejilla-comercial" data-verify-unit="lotes-comerciales" data-total="0" data-elegido=""></div>
-        <div class="ficha" id="ficha-comercial" aria-live="polite">Toca un solar para ver su área.</div>
+        <div class="ficha" id="ficha-comercial" aria-live="polite">Toca el solar para ver su ficha.</div>
       </div>
     </div>
   </section>
@@ -419,7 +481,7 @@
       <div class="antetitulo">Residencial</div>
       <h2>Detrás, la parte residencial</h2>
       <div class="tarjetas">
-        <div class="tarjeta"><b>131</b><span>solares residenciales, de 342 a 1,220 m²</span></div>
+        <div class="tarjeta"><b>131</b><span>solares residenciales, de 342 a 1,220&nbsp;m²</span></div>
         <div class="tarjeta"><b>Parque</b><span>en el centro de la zona residencial</span></div>
         <div class="tarjeta"><b>615 m²</b><span>de escuela</span></div>
       </div>
@@ -461,6 +523,7 @@
       <div>
         <div class="antetitulo" style="color:var(--sol)">Estado del proyecto</div>
         <h2>Anteproyecto, junio de 2026</h2>
+        <p style="margin-top:22px"><a class="boton lleno" href="informe.pdf" target="_blank" rel="noopener">Informe para inversionistas (PDF)</a></p>
         <p class="intro">El plano maestro de zonificación de la fase 1 está en etapa de anteproyecto. Las áreas de esta presentación salen de ese plano; precios y condiciones se definen en la etapa siguiente.</p>
       </div>
       <ul class="hechos">
@@ -514,11 +577,11 @@
     lotes.forEach((l) => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "lote " + clase; b.setAttribute("aria-pressed", "false");
-      b.innerHTML = `<strong>${l.id}</strong>${fmt(l.m2, 2)} m²`;
+      b.innerHTML = l.grande ? `<strong>Solar ${l.id}</strong>${fmt(l.m2, 2)} m² · 109 × 183.5 m` : `<strong>${l.id}</strong>${fmt(l.m2, 2)} m²`;
       if (ficha) b.addEventListener("click", () => {
         el.querySelectorAll(".lote").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
         el.dataset.elegido = l.id;
-        ficha.innerHTML = `<strong>Solar ${l.id}</strong> · ${fmt(l.m2, 2)} m² · zona comercial, frente a la carretera`;
+        ficha.innerHTML = `<strong>Solar ${l.id}</strong> · ${fmt(l.m2, 2)} m² · rectangular, 109 m de frente a la carretera y 183.5 m de fondo. Propuesta.`;
       });
       el.appendChild(b);
     });
@@ -548,7 +611,7 @@
   const lista = document.getElementById("lista-distancias");
   D.rutas.destinos.forEach((d, i) => {
     const li = document.createElement("li");
-    li.tabIndex = 0;
+    li.tabIndex = 0; li.setAttribute("role", "button");
     li.innerHTML = `<span class="n" style="background:${COLORES[d.tipo]}">${i + 1}</span><span>${d.nombre}<br><small>${d.desc}</small></span><span class="d">${d.min_carro} min · ${fmt(d.km_carro, 1)} km</span>`;
     const ir = () => {
       lista.querySelectorAll("li").forEach((x) => x.removeAttribute("aria-current"));
@@ -557,10 +620,32 @@
       if (window.ElPozo3D) window.ElPozo3D.enfocar(i);
     };
     li.addEventListener("click", ir);
-    li.addEventListener("keydown", (e) => { if (e.key === "Enter") ir(); });
+    li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ir(); } });
     lista.appendChild(li);
   });
   lista.dataset.total = D.rutas.destinos.length;
+
+  // Comparador del render fotorrealista
+  (() => {
+    const comp = document.getElementById("comparador");
+    if (!comp) return;
+    const antes = comp.querySelector(".antes"), despues = comp.querySelector(".despues"), img = despues.querySelector("img"), linea = comp.querySelector(".linea");
+    const mover = (v) => { despues.style.clipPath = `inset(0 0 0 ${v}%)`; linea.style.left = v + "%"; };
+    document.getElementById("deslizador").addEventListener("input", (e) => mover(+e.target.value));
+    const poner = () => {
+      const v = comp.dataset.vista, f = comp.dataset.fase;
+      antes.src = `assets/render/${v}/antes.jpg`;
+      img.src = `assets/render/${v}/fase_0${f}.jpg`;
+    };
+    document.querySelectorAll(".vistas button").forEach((b) => b.addEventListener("click", () => {
+      document.querySelectorAll(".vistas button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      comp.dataset.vista = b.dataset.vista; poner();
+    }));
+    document.querySelectorAll(".fases button").forEach((b) => b.addEventListener("click", () => {
+      document.querySelectorAll(".fases button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      comp.dataset.fase = b.dataset.f; poner();
+    }));
+  })();
 
   // Cuadro de áreas (Plan Maestro, junio 2026)
   const AREAS = [

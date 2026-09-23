@@ -409,15 +409,12 @@
   }
   const [cxC, cnC] = centroZona("comercial");
   const [cxR, cnR] = centroZona("residencial");
-  etiqueta("<b>El Pozo</b>", P(0, 360, 40), [0, 2], "grande");
+  // Orden = prioridad: si dos etiquetas chocan, la de después se aparta o se oculta.
   const [cxG, cnG] = [cg.p.reduce((a, q) => a + q[0], 0) / cg.p.length, cg.p.reduce((a, q) => a + q[1], 0) / cg.p.length];
   etiqueta("<b>Plaza comercial</b><span>solar de 20,000 m² · 109 × 183.5 m</span>", P(cxG, cnG, 40), [0, 1, 3], "coral");
-  etiqueta("Carretera Las Cejas – La Enea", P(110, 120, 6), [1]);
-  {
-    const l = D.plano.poligonos.find((q) => q.id === "C12");
-    if (l) etiqueta("<b>Ejemplo</b><span>locales de 2 niveles con parqueo</span>", P(l.p.reduce((a, q) => a + q[0], 0) / l.p.length, l.p.reduce((a, q) => a + q[1], 0) / l.p.length, 24), [1]);
-  }
   etiqueta("<b>Residencial</b><span>131 solares</span>", P(cxR, cnR - 60, 22), [0, 3], "azul");
+  etiqueta("<b>El Pozo</b>", P(0, 360, 40), [2], "grande");
+  etiqueta("Carretera Las Cejas – La Enea", P(110, 120, 6), [1]);
   const ptCirc = D.vias.filter((v) => v.c === "circ").flatMap((v) => v.p).reduce((a, q) => (Math.hypot(q[0], q[1] - 300) < Math.hypot(a[0], a[1] - 300) ? q : a));
   etiqueta("Circunvalación", P(ptCirc[0] + 60, ptCirc[1] + 40, 10), [1, 2], "oro");
   rutas.forEach((r) => { r.etq = etiqueta(`<b>${r.d.nombre}</b><span>${r.d.min_carro} min · ${r.d.km_carro.toLocaleString("es-DO")} km</span>`, P(r.d.xy[0], r.d.xy[1], 300), [2], "destino"); });
@@ -430,14 +427,18 @@
     {pos: P(-60, -470, 380), mira: P(-25, 40, 0)},
   ];
   if (cg) {
+    plaza.updateMatrixWorld(true);  // sin esto localToWorld usa la matriz identidad (aún no se ha renderizado)
     CAPS[1] = {pos: plaza.localToWorld(new THREE.Vector3(135, 95, 175)), mira: plaza.localToWorld(new THREE.Vector3(0, 6, -10))};
   }
   let cap = -1, tw = null, t0 = performance.now(), foco = -1, obraInicio = 0, captura = false;
   const DURACION_OBRA = 14;
   const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2);
+  // En pantallas altas (móvil) la cámara se aleja para que quepa lo mismo a lo ancho.
+  let alejar = 1;
   function irA(pos, mira, ms = 2200) {
     manual = false;
-    tw = {p0: camara.position.clone(), m0: controles.target.clone(), p1: pos, m1: mira, t: performance.now(), ms: quieto ? 1 : ms};
+    const p1 = mira.clone().add(pos.clone().sub(mira).multiplyScalar(alejar));
+    tw = {p0: camara.position.clone(), m0: controles.target.clone(), p1, m1: mira, t: performance.now(), ms: quieto ? 1 : ms};
   }
   function capitulo(i) {
     if (i === cap) return;
@@ -501,6 +502,11 @@
     renderer.setSize(w, h, false);
     camara.aspect = w / h;
     camara.updateProjectionMatrix();
+    const antes = alejar;
+    alejar = Math.min(2, Math.max(1, 1.2 / camara.aspect));
+    escena.fog.near = 7000 * alejar;
+    escena.fog.far = 24000 * alejar;
+    if (Math.abs(antes - alejar) > 0.05 && cap >= 0 && foco < 0 && !captura) irA(CAPS[cap].pos, CAPS[cap].mira, 600);
   }
   new ResizeObserver(medir).observe(cont);
   medir();
@@ -550,12 +556,30 @@
     matCirc.opacity = cap === 1 || cap === 2 ? 0.95 : 0.55;
     renderer.render(escena, camara);
     // etiquetas
-    const w = cont.clientWidth, h = cont.clientHeight;
+    // etiquetas: dentro del marco y sin pisarse (primero se lee el tamaño, luego se escribe)
+    const w = cont.clientWidth, h = cont.clientHeight, M = 8;
+    const puestas = [];
+    const medidas = etiquetas.map((e) => [e.el.offsetWidth, e.el.offsetHeight]);
     etiquetas.forEach((e, i) => {
       v.copy(e.pos).project(camara);
-      const ok = e.capitulos.includes(cap) && v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 && (!rutas.some((r) => r.etq === e) || rutas.find((r) => r.etq === e).avance > 0.9);
+      const ruta = rutas.find((r) => r.etq === e);
+      let ok = e.capitulos.includes(cap) && v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 && (!ruta || ruta.avance > 0.9);
+      const [ew, eh] = medidas[i];
+      let x = ((v.x + 1) / 2) * w, y = ((1 - v.y) / 2) * h;
+      x = Math.min(w - M - ew / 2, Math.max(M + ew / 2, x));
+      y = Math.min(h - 40, Math.max(M + eh, y));
+      if (ok) {
+        // si choca con una ya puesta, se sube por encima; si no cabe, se oculta
+        for (let intento = 0; intento < 4; intento++) {
+          const r = {x0: x - ew / 2, x1: x + ew / 2, y0: y - eh, y1: y};
+          const otra = puestas.find((q) => r.x0 < q.x1 + 4 && r.x1 > q.x0 - 4 && r.y0 < q.y1 + 4 && r.y1 > q.y0 - 4);
+          if (!otra) { puestas.push(r); break; }
+          y = otra.y0 - 6;
+          if (y - eh < M || intento === 3) { ok = false; break; }
+        }
+      }
       e.el.style.opacity = ok ? 1 : 0;
-      e.el.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(-50%, -100%)`;
+      e.el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%)`;
     });
   }
   requestAnimationFrame(cuadro);
