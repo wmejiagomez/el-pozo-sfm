@@ -38,8 +38,36 @@
   nav a:hover { color: var(--tinta); }
   @media (max-width: 760px) { nav { display: none; } }
 
-  .portada { position: relative; min-height: min(72svh, 620px); display: flex; align-items: flex-end; color: #fff; background: #29352e url(assets/terreno/DJI_0313.jpg) center/cover; }
-  .portada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05) 40%, rgba(0,0,0,.6)); }
+  .portada { position: relative; min-height: min(86svh, 760px); display: flex; align-items: flex-end; color: #fff; background: #29352e url(assets/hero.jpg) center/cover; overflow: hidden; }
+  .portada video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .portada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.65) 100%); }
+  .sello { display: inline-block; background: var(--sol); color: var(--tinta); font-weight: 600; font-size: 14px; padding: 7px 14px; border-radius: 999px; margin-bottom: 14px; }
+  .bajar { position: absolute; left: 50%; bottom: 16px; z-index: 1; transform: translateX(-50%); width: 28px; height: 44px; border: 2px solid rgba(255,255,255,.8); border-radius: 16px; }
+  .bajar::after { content: ""; position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: #fff; animation: bajar 1.8s ease-in-out infinite; }
+  @keyframes bajar { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(14px); opacity: 0; } 100% { opacity: 0; } }
+  .portada h1, .portada p, .sello { animation: subir .9s cubic-bezier(.2,.7,.2,1) both; }
+  .portada p { animation-delay: .15s; } .sello { animation-delay: .3s; }
+  @keyframes subir { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
+  /* Aparición suave al bajar (solo si hay JS; sin él todo está visible) */
+  .aparece { transition: transform .8s cubic-bezier(.2,.7,.2,1), opacity .8s; }
+  .aparece.espera { transform: translateY(26px); opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .portada h1, .portada p, .sello, .bajar::after { animation: none; } .aparece.espera { transform: none; opacity: 1; } }
+  /* Antes y después sobre la ortofoto */
+  .comparar { position: relative; aspect-ratio: 2400 / 1091; user-select: none; }
+  .comparar img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .comparar .despues { clip-path: inset(0 0 0 50%); }
+  .comparar .linea { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: #fff; transform: translateX(-1.5px); pointer-events: none; box-shadow: 0 0 12px rgba(0,0,0,.4); }
+  .comparar .linea::after { content: "⇆"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 38px; height: 38px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-weight: 700; color: var(--tinta); }
+  .comparar input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .comparar .m { position: absolute; bottom: 12px; font: 600 12px Inter, sans-serif; background: rgba(0,0,0,.6); color: #fff; padding: 5px 10px; border-radius: 8px; pointer-events: none; }
+  .comparar .m.i { left: 84px; } .comparar .m.d { right: 12px; background: var(--arcilla); }
+  /* El camino en vídeo */
+  .camino { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 26px; counter-reset: paso; }
+  .camino figure { margin: 0; position: relative; }
+  .camino video { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radio); display: block; background: #29352e; }
+  .camino figcaption { position: absolute; left: 10px; bottom: 10px; background: rgba(255,255,255,.94); padding: 6px 12px; border-radius: 99px; font: 600 14px Inter, sans-serif; }
+  .camino figcaption::before { counter-increment: paso; content: counter(paso); display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--arcilla); color: #fff; font-size: 12px; margin-right: 8px; }
+  @media (max-width: 700px) { .camino { grid-template-columns: 1fr; } }
   .portada .envoltura { position: relative; z-index: 1; width: 100%; padding-bottom: 48px; }
   .portada h1 { font-size: clamp(56px, 10vw, 112px); font-weight: 800; }
   .portada p { font-size: clamp(17px, 2vw, 21px); margin: 8px 0 0; max-width: 560px; }
@@ -170,6 +198,7 @@
     <nav aria-label="Secciones">
       <a href="#proyecto">Proyecto</a>
       <a href="#recorrido3d">3D</a>
+      <a href="#camino">Camino</a>
       <a href="#fotos">Fotos</a>
       <a href="#recorrido">360</a>
       <a href="#solares">Solares</a>
@@ -180,10 +209,13 @@
 
 <main id="inicio">
   <section class="portada" data-verify-unit="portada">
+    <video autoplay muted loop playsinline poster="assets/hero.jpg" aria-hidden="true"><source src="assets/hero.mp4" type="video/mp4"></video>
     <div class="envoltura">
+      <span class="sello">A menos de 300 m de la Circunvalación</span>
       <h1>El Pozo</h1>
-      <p>Solares y plaza comercial en San Francisco de Macorís, a menos de 300 m de la Circunvalación.</p>
+      <p>Solares y plaza comercial en San Francisco de Macorís.</p>
     </div>
+    <a class="bajar" href="#proyecto" aria-label="Bajar"></a>
   </section>
 
   <section id="proyecto">
@@ -191,9 +223,9 @@
       <div class="etiqueta">El proyecto</div>
       <h2>Qué es El Pozo</h2>
       <div class="cifras" data-verify-unit="cifras">
-        <div class="cifra"><b>145,232 m²</b><span>de terreno</span></div>
-        <div class="cifra"><b>126</b><span>solares</span></div>
-        <div class="cifra"><b>21,727 m²</b><span>para la plaza comercial</span></div>
+        <div class="cifra"><b data-contar="145232" data-suf=" m²">145,232 m²</b><span>de terreno</span></div>
+        <div class="cifra"><b data-contar="126">126</b><span>solares</span></div>
+        <div class="cifra"><b data-contar="21727" data-suf=" m²">21,727 m²</b><span>para la plaza comercial</span></div>
       </div>
       <div class="hueco" data-hueco="descripcion"><b>Aquí iría la descripción del proyecto</b>Qué se va a construir, para quién y en qué etapas.<div class="raya m"></div><div class="raya c"></div></div>
     </div>
@@ -214,6 +246,18 @@
     </div>
   </section>
 
+  <section id="camino">
+    <div class="envoltura">
+      <div class="etiqueta">El camino</div>
+      <h2>De la ciudad a El Pozo</h2>
+      <div class="camino" data-verify-unit="camino">
+        <figure><video src="assets/clips/pueblo_01_salida_urbana.mp4" poster="assets/clips/pueblo_01_salida_urbana.jpg" muted loop playsinline preload="none"></video><figcaption>La ciudad</figcaption></figure>
+        <figure><video src="assets/clips/pueblo_03_transicion_suburbana.mp4" poster="assets/clips/pueblo_03_transicion_suburbana.jpg" muted loop playsinline preload="none"></video><figcaption>La vía</figcaption></figure>
+        <figure><video src="assets/clips/pueblo_07_llegada_proyecto.mp4" poster="assets/clips/pueblo_07_llegada_proyecto.jpg" muted loop playsinline preload="none"></video><figcaption>El Pozo</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
   <section id="fotos">
     <div class="envoltura">
       <div class="etiqueta">Fotos del dron</div>
@@ -224,10 +268,13 @@
         <img src="assets/clips/pano_02_horizonte_cordillera.jpg" alt="El entorno con la cordillera al fondo" loading="lazy">
         <img src="assets/clips/pueblo_01_salida_urbana.jpg" alt="La ciudad, camino al proyecto" loading="lazy">
       </div>
-      <div class="marco plano" data-verify-unit="plano">
-        <span class="rotulo">Plano sobre la ortofoto · norte a la izquierda</span>
-        <img src="assets/terreno/orto.jpg" alt="Ortofoto del terreno" loading="lazy">
-        <img src="assets/terreno/plano-orto.png" alt="" loading="lazy" style="opacity:.85">
+      <div class="marco comparar" data-verify-unit="plano" data-valor="50">
+        <span class="rotulo">Desliza: hoy y con el proyecto · norte a la izquierda</span>
+        <img src="assets/terreno/orto.jpg" alt="Ortofoto del terreno hoy" loading="lazy">
+        <img class="despues" src="assets/terreno/orto-plano.jpg" alt="La misma ortofoto con la distribución de los solares" loading="lazy">
+        <div class="linea" aria-hidden="true"></div>
+        <input type="range" min="0" max="100" value="50" aria-label="Comparar hoy con el proyecto">
+        <span class="m i">Hoy</span><span class="m d">Con el proyecto</span>
       </div>
       <div class="leyenda"><span><i style="background:#e4573d"></i>Plaza comercial</span><span><i style="background:#f0b43c"></i>Mixtos</span><span><i style="background:#4f8fe8"></i>Residencial</span></div>
     </div>
@@ -288,7 +335,7 @@
           </div>
           <ol class="lugares"></ol>
         </div>
-        <p class="nota-mapa">Rutas en carro por las vías abiertas (OpenStreetMap y OSRM). La Circunvalación está en obra: con ella los tiempos son un estimado a 60 km/h, suponiendo un acceso cerca del proyecto.</p>
+        <p class="nota-mapa">Rutas en carro por las vías abiertas (OpenStreetMap y OSRM). La Circunvalación está en obra y tendrá entrada junto al proyecto; con ella los tiempos son un estimado a 60 km/h.</p>
       </div>
     </div>
   </section>
@@ -326,6 +373,39 @@
 <script src="vista3d.js"></script>
 <script src="visor360.js"></script>
 <script src="mapa.js"></script>
+<script>
+  (() => {
+    const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // cifras que cuentan hasta su valor al verse
+    const fmt = (n) => n.toLocaleString("en-US");
+    const obsCifras = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      obsCifras.unobserve(e.target);
+      const b = e.target, fin = +b.dataset.contar, suf = b.dataset.suf || "";
+      if (quieto) return;
+      const t0 = performance.now(), dur = 1400;
+      const paso = (t) => { const k = Math.min(1, (t - t0) / dur), v = Math.round(fin * (1 - Math.pow(1 - k, 3))); b.textContent = fmt(v) + suf; if (k < 1) requestAnimationFrame(paso); };
+      requestAnimationFrame(paso);
+    }), {threshold: 0.6});
+    document.querySelectorAll("[data-contar]").forEach((b) => obsCifras.observe(b));
+    // secciones que aparecen al bajar (las que ya están a la vista no se tocan)
+    const obsAp = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.remove("espera"); obsAp.unobserve(e.target); } }), {rootMargin: "0px 0px -8% 0px"});
+    document.querySelectorAll("main > section:not(.portada) .envoltura").forEach((el) => {
+      el.classList.add("aparece");
+      if (!quieto && el.getBoundingClientRect().top > innerHeight) { el.classList.add("espera"); obsAp.observe(el); }
+    });
+    // vídeos del camino: solo corren a la vista
+    const obsV = new IntersectionObserver((es) => es.forEach((e) => { const v = e.target; if (e.isIntersecting) { v.preload = "auto"; v.play().catch(() => {}); } else v.pause(); }), {threshold: 0.3});
+    document.querySelectorAll(".camino video").forEach((v) => obsV.observe(v));
+    // antes / después
+    const cmp = document.querySelector(".comparar");
+    const mover = (v) => { cmp.querySelector(".despues").style.clipPath = `inset(0 0 0 ${v}%)`; cmp.querySelector(".linea").style.left = v + "%"; cmp.dataset.valor = v; };
+    cmp.querySelector("input").addEventListener("input", (e) => mover(+e.target.value));
+    // un vaivén corto la primera vez que se ve, para que se note que se desliza
+    const obsC = new IntersectionObserver((es) => { if (!es[0].isIntersecting || quieto) return; obsC.disconnect(); const t0 = performance.now(); const paso = (t) => { const k = (t - t0) / 1600; if (k >= 1) { mover(50); return; } mover(Math.round(50 + 28 * Math.sin(k * Math.PI * 2))); requestAnimationFrame(paso); }; requestAnimationFrame(paso); }, {threshold: 0.5});
+    obsC.observe(cmp);
+  })();
+</script>
 
 </body>
 </html>
