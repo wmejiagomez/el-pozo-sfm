@@ -249,6 +249,7 @@
   .hechos b { display: block; color: #fff; font-size: 14px; letter-spacing: .02em; margin-bottom: 2px; color: var(--sol); }
   .render-sec { background: #0e1a17; color: #fff; }
   .render-sec .intro, .render-sec .nota { color: rgba(255,255,255,.72); }
+  .render-sec .vuelo { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radio); margin-top: 28px; display: block; box-shadow: 0 30px 70px rgba(0,0,0,.45); background: #000; }
   .vistas, .fases { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
   .vistas button, .fases button { background: rgba(255,255,255,.08); color: #fff; border: 1.5px solid rgba(255,255,255,.25); padding: 9px 16px; border-radius: 999px; font: 600 14px Inter, sans-serif; cursor: pointer; }
   .vistas button[aria-pressed="true"], .fases button[aria-pressed="true"] { background: var(--arcilla); border-color: var(--arcilla); }
@@ -390,6 +391,7 @@
       <div class="antetitulo">Así se vería</div>
       <h2>La plaza sobre las fotos reales del terreno</h2>
       <p class="intro">Render fotorrealista de la plaza comercial montado sobre las fotos de dron del terreno, con la cámara de cada foto recuperada a partir de puntos del suelo. Arrastra la línea para comparar con el terreno de hoy o recorre la obra fase por fase.</p>
+      <video class="vuelo" src="assets/render/vuelo.mp4" autoplay muted loop playsinline poster="assets/render/c0107/fase_07.jpg" aria-label="Vuelo 3D alrededor de la plaza comercial terminada"></video>
       <div class="vistas" role="group" aria-label="Foto de dron">
         <button type="button" data-vista="c0104" aria-pressed="true">Desde la entrada</button>
         <button type="button" data-vista="c0107" aria-pressed="false">Vista lateral</button>
