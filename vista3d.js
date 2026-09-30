@@ -45,7 +45,7 @@
     m.renderOrder = orden;
     escena.add(m);
   };
-  // Plano base esquemático (calles de OpenStreetMap sobre un tono de Sentinel-2, 3 km;
+  // Plano base esquemático (calles de OpenStreetMap sobre fondo liso, 3 km;
   // scripts/mapa_base.py) y, encima, la ortofoto real del vuelo
   suelo("assets/mapa_base.jpg", null, -1500, 1500, -1560, 1440, -0.3, 0);
   suelo("assets/orto_odm.jpg", "assets/orto_odm_alfa.png", -245.03, 161.4, -484.81, 408.94, 0, 1);

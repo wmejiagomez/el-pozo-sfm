@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <style>[hidden]{display:none!important} img{max-width:100%} :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <meta charset="utf-8">
 <title>El Pozo, San Francisco de Macorís</title>
@@ -130,6 +132,31 @@
   .ficha b { display: block; margin-top: 12px; }
   .ficha span { color: var(--gris); font-size: 14px; }
   @media (max-width: 800px) { .fichas { grid-template-columns: 1fr; } }
+  .estados { margin-top: 22px; }
+  .estados .barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .estados .barra button { font: inherit; font-size: 14px; border: 1.5px solid #c9d0ca; background: #fff; border-radius: 999px; padding: 8px 14px; min-height: 44px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+  .estados .barra button[aria-pressed="true"] { border-color: var(--bosque); background: var(--bosque); color: #fff; }
+  .estados .pt { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .estados .barra .pt { margin: 0; }
+  .pt.disponible { background: #2e9e5b; } .pt.reservado { background: var(--sol); } .pt.vendido { background: var(--arcilla); }
+  .estados .zoom-plano { margin-left: auto; display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--gris); }
+  .estados .zoom-plano button { width: 44px; padding: 0; justify-content: center; }
+  .aviso-ejemplo { margin: 0 0 10px; padding: 10px 14px; border-radius: 10px; background: #fff4d6; border: 1.5px solid var(--sol); font-size: 14px; }
+  .lienzo-estados { border: 1px solid var(--linea); border-radius: var(--radio); background: #fff; overflow: hidden; height: min(62vh, 640px); }
+  .estados-svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  .estados-svg .terreno { fill: rgba(241,243,238,.25); stroke: #fff; stroke-width: 1.5; }
+  .estados-svg .vial { stroke: none; } .vial.carretera { fill: #3d4248; } .vial.marginal { fill: #7d858c; } .vial.calles { fill: #c4c9ce; }
+  .estados-svg .solar { stroke: #fff; stroke-width: .6; transition: opacity .15s; fill-opacity: .8; }
+  .leyenda-viales { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--gris); }
+  .vial-pt { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 1px solid #fff; box-shadow: 0 0 0 1px #c9d0ca; }
+  .vial-pt.carretera { background: #3d4248; } .vial-pt.marginal { background: #7d858c; } .vial-pt.calles { background: #c4c9ce; }
+  .estados-svg .solar.disponible { fill: #2e9e5b; } .estados-svg .solar.reservado { fill: var(--sol); } .estados-svg .solar.vendido { fill: var(--arcilla); }
+  .estados-svg .solar.nodisp { fill: #cfd8cf; }
+  .estados-svg .solar:not(.nodisp) { cursor: pointer; }
+  .estados-svg .solar.tenue { opacity: .15; }
+  .estados-svg .solar.sel { stroke: var(--tinta); stroke-width: 2; }
+  .ficha-estado { margin-top: 12px; padding: 14px 18px; border: 1px solid var(--linea); border-radius: var(--radio); background: #fff; min-height: 70px; }
+  .ficha-estado b { display: block; } .ficha-estado span { color: var(--gris); font-size: 14px; } .ficha-estado em { display: block; font-size: 12px; color: var(--gris); margin-top: 2px; }
   .form { display: grid; gap: 10px; max-width: 460px; margin-top: 16px; }
   .campo { height: 44px; border: 1.5px solid #c9d0ca; border-radius: 10px; background: #fff; padding: 0 14px; display: flex; align-items: center; color: #a3aca5; font-size: 15px; }
   .boton-falso { height: 46px; border-radius: 999px; background: #c9d0ca; color: #fff; display: grid; place-items: center; font-weight: 600; max-width: 200px; }
@@ -278,7 +305,7 @@
         <div id="vista3d" data-verify-unit="vista3d" data-state="cargando">
           <span class="rotulo">Maqueta de ejemplo</span>
           <div class="etiquetas" aria-hidden="true"></div>
-          <span class="pie-3d">Plano base: © OpenStreetMap · tono: Sentinel-2 cloudless, EOX</span>
+          <span class="pie-3d">Plano base: © colaboradores de OpenStreetMap</span>
         </div>
       </div>
     </div>
@@ -410,6 +437,27 @@
     </div>
   </section>
 
+  <section id="plano">
+    <div class="envoltura">
+      <div class="etiqueta">Plano de solares</div>
+      <h2>Toca un solar y míralo en el plano</h2>
+      <p class="sub">Arrastra para mover, rueda o pellizco para acercar. Los estados son de ejemplo y no reflejan disponibilidad real.</p>
+      <div class="estados" id="plano-estados" data-verify-unit="plano-estados" data-state="cargando" data-filtro="todos" data-total="0" data-elegido="" data-zoom="1.00">
+        <div class="barra">
+          <button type="button" data-filtro="todos" aria-pressed="true">Todos</button>
+          <button type="button" data-filtro="disponible" aria-pressed="false"><i class="pt disponible"></i>Disponible <span class="n">0</span></button>
+          <button type="button" data-filtro="reservado" aria-pressed="false"><i class="pt reservado"></i>Reservado <span class="n">0</span></button>
+          <button type="button" data-filtro="vendido" aria-pressed="false"><i class="pt vendido"></i>Vendido <span class="n">0</span></button>
+          <div class="zoom-plano"><button type="button" data-zoom-menos aria-label="Alejar">−</button><span class="nivel">100%</span><button type="button" data-zoom-mas aria-label="Acercar">+</button><button type="button" data-zoom-reset aria-label="Restablecer vista" style="width:auto;padding:0 12px">Restablecer</button></div>
+        </div>
+        <p class="aviso-ejemplo" role="note"><b>Estados de ejemplo, no reflejan disponibilidad real.</b> Los colores solo muestran cómo funcionará el plano.</p>
+        <div class="lienzo-estados"></div>
+        <ul class="leyenda-viales" aria-label="Vías del proyecto"></ul>
+        <div class="ficha-estado"><span>Toca un solar para ver su área y su estado.</span></div>
+      </div>
+    </div>
+  </section>
+
   <section id="ubicacion">
     <div class="envoltura">
       <div class="etiqueta">Ubicación</div>
@@ -458,7 +506,7 @@
 <footer>
   <div class="envoltura">
     <p>El Pozo · San Francisco de Macorís · Demo de página web: contenido e imágenes de ejemplo.</p>
-    <p>Plano base: © colaboradores de OpenStreetMap. Tono de fondo: Sentinel-2 cloudless (s2maps.eu, EOX IT Services GmbH; datos modificados de Copernicus Sentinel 2016).</p>
+    <p>Plano base: © colaboradores de OpenStreetMap.</p>
   </div>
 </footer>
 
@@ -468,6 +516,7 @@
 <script src="vista3d.js"></script>
 <script src="visor360.js"></script>
 <script src="mapa.js"></script>
+<script src="plano-estados.js"></script>
 <script>
   const D = window.EL_POZO;
   (() => {

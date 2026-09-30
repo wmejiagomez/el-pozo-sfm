@@ -32,9 +32,7 @@ Coches, farolas, casas, locales, aceras, cerca y la nave se generan con código 
 - **Blender 4.2 LTS** (GPL) solo como programa que corre los renders; no se distribuye con el sitio.
 - **Three.js** (MIT) por CDN en la página.
 - **OpenStreetMap** (ODbL): © colaboradores de OpenStreetMap, atribuido en la maqueta.
-- **Sentinel-2 cloudless, EOX**: la capa usada es `s2cloudless_3857` (sin año, `scripts/teselas.py`), que EOX
-  publica como la versión 2016 bajo **CC BY 4.0** (uso comercial permitido con atribución). Las versiones de
-  2018 en adelante son CC BY-NC-SA 4.0 (no comercial) y NO se deben usar. Fuente: https://eox.at/2019/02/sentinel-2-cloudless-2018/.
-  Atribución requerida: «Sentinel-2 cloudless – https://s2maps.eu by EOX IT Services GmbH (Contains modified
-  Copernicus Sentinel data 2016)». PENDIENTE: confirmar con EOX que `s2cloudless_3857` sigue siendo la de 2016 y
-  ampliar la atribución de la maqueta.
+- **Sentinel-2 cloudless, EOX: RETIRADO del sitio (30/09/2026, decisión de Werner).** No se pudo confirmar que la
+  capa `s2cloudless_3857` fuera la de 2016 (CC BY 4.0); de 2018 en adelante es no comercial. El fondo de
+  `assets/mapa_base.jpg` ahora es un color liso con las calles y edificios de OpenStreetMap
+  (`scripts/mapa_base.py`); el sitio ya no contiene ni deriva de datos Sentinel-2. La ortofoto es propia (dron).
