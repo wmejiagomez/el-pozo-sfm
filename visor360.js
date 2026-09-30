@@ -61,7 +61,7 @@
     g.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
     return g;
   }
-  const ZCOL = {comercial: "#8b3dff", residencial: "#4f8fe8", mixto: "#f0b43c", verde: "#6cc070", plaza: "#f2c29a", apartamentos: "#f0cf55", escuela: "#a996e8"};
+  const ZCOL = {comercial: "#8b3dff", comercio: "#e4573d", villa: "#c2409d", reserva: "#5b8c5a", residencial: "#4f8fe8", mixto: "#f0b43c", verde: "#6cc070", plaza: "#f2c29a", apartamentos: "#f0cf55", escuela: "#a996e8"};
 
   function construirPlano(pano) {
     capaPlano.clear();

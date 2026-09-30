@@ -51,7 +51,7 @@
   suelo("assets/orto_odm.jpg", "assets/orto_odm_alfa.png", -245.03, 161.4, -484.81, 408.94, 0, 1);
 
   // Solares en planta
-  const COLOR = {comercial: "#e4573d", mixto: "#f0b43c", residencial: "#4f86d9"};
+  const COLOR = {comercial: "#f2c230", comercio: "#d64541", mixto: "#f0b43c", villa: "#c2409d", verde: "#3c9d4e", reserva: "#5b8c5a", residencial: "#4f86d9"};
   // con rotateX(-π/2) la y de la forma pasa a ser -z, es decir, el norte: se usa (x, n) tal cual
   const forma = (pts) => { const s = new THREE.Shape(); pts.forEach(([x, n], i) => (i ? s.lineTo(x, n) : s.moveTo(x, n))); return s; };
   const borde = new THREE.LineBasicMaterial({color: "#ffffff", transparent: true, opacity: 0.8});
@@ -61,7 +61,7 @@
     m.position.y = 0.6;
     m.renderOrder = 2;
     escena.add(m);
-    const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(p.p.map(([x, n]) => P(x, n, 0.8))), p.grande ? new THREE.LineBasicMaterial({color: "#e4573d"}) : borde);
+    const l = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(p.p.map(([x, n]) => P(x, n, 0.8))), p.grande ? new THREE.LineBasicMaterial({color: "#f2c230"}) : borde);
     l.renderOrder = 3;
     escena.add(l);
   }
@@ -93,7 +93,7 @@
   const capa = cont.querySelector(".etiquetas");
   const media = (zona) => { const ps = D.plano.poligonos.filter((q) => q.zona === zona).flatMap((q) => q.p); return [ps.reduce((a, q) => a + q[0], 0) / ps.length, ps.reduce((a, q) => a + q[1], 0) / ps.length]; };
   const circ = D.vias.filter((q) => q.c === "circ").flatMap((q) => q.p).reduce((a, q) => (Math.hypot(q[0], q[1] - 300) < Math.hypot(a[0], a[1] - 300) ? q : a));
-  const etiquetas = [["Plaza comercial", media("comercial"), "#e4573d"], ["Mixtos", media("mixto"), "#b07d12"], ["Residencial", media("residencial"), "#2f6fcf"], ["Circunvalación", circ, "#f3b33d"]].map(([t, [x, n], c]) => {
+  const etiquetas = [["Plaza comercial · 20,000 m²", media("comercial"), "#b8860b"], ["Solares de comercio", media("comercio"), "#d64541"], ["Villas", media("villa"), "#c2409d"], ["Residencial", media("residencial"), "#2f6fcf"], ["Circunvalación", circ, "#f3b33d"]].map(([t, [x, n], c]) => {
     const el = document.createElement("span");
     el.className = "etq3d";
     el.textContent = t;

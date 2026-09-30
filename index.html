@@ -119,6 +119,11 @@
   .hueco b { display: block; color: var(--tinta); font-size: 17px; margin-bottom: 4px; }
   .raya { height: 10px; border-radius: 99px; background: #d8ddd7; margin-top: 10px; }
   .raya.c { width: 55%; } .raya.m { width: 75%; }
+  .galeria { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 18px; }
+  .galeria figure { margin: 0; }
+  .galeria img { width: 100%; height: auto; border-radius: var(--radio); display: block; background: var(--hueco); }
+  .galeria figcaption { font-size: 14px; color: var(--gris); margin-top: 6px; }
+  @media (max-width: 800px) { .galeria { grid-template-columns: 1fr; } }
   .fichas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
   .ficha { border: 2px dashed #b9c1ba; border-radius: var(--radio); background: #fff; padding: 18px; }
   .ficha .foto { height: 90px; border-radius: 10px; background: var(--hueco); display: grid; place-items: center; color: #a3aca5; font-size: 13px; }
@@ -256,9 +261,10 @@
       <h2>Qué es El Pozo</h2>
       <div class="cifras" data-verify-unit="cifras">
         <div class="cifra"><b data-contar="145232" data-suf=" m²">145,232 m²</b><span>de terreno</span></div>
-        <div class="cifra"><b data-contar="126">126</b><span>solares</span></div>
-        <div class="cifra"><b data-contar="21727" data-suf=" m²">21,727 m²</b><span>para la plaza comercial</span></div>
+        <div class="cifra"><b data-contar="153">153</b><span>solares: 13 de comercio, 20 villas y 120 residenciales</span></div>
+        <div class="cifra"><b data-contar="20000" data-suf=" m²">20,000 m²</b><span>para la plaza comercial</span></div>
       </div>
+      <p class="sub" data-verify-unit="plaza-medidas">La plaza comercial mide 20,000 m²: 182.96 m de frente al este, 122.14 m al sur, 144.15 m al oeste y 128.26 m al norte. Distribución de la propuesta 2.</p>
       <div class="hueco" data-hueco="descripcion"><b>Aquí iría la descripción del proyecto</b>Qué se va a construir, para quién y en qué etapas.<div class="raya m"></div><div class="raya c"></div></div>
     </div>
   </section>
@@ -308,7 +314,7 @@
         <span class="rotulo">Render ilustrativo · orden de ejemplo</span>
         <img src="assets/terminado/hoy-0313.jpg" alt="Hoy" data-e="0" loading="lazy">
         <img src="assets/terminado/e1-0313.jpg" alt="Etapa 1: plaza comercial" data-e="1" loading="lazy">
-        <img src="assets/terminado/e2-0313.jpg" alt="Etapa 2: locales en los solares mixtos" data-e="2" loading="lazy">
+        <img src="assets/terminado/e2-0313.jpg" alt="Etapa 2: locales en los solares de comercio" data-e="2" loading="lazy">
         <img src="assets/terminado/e3-0313.jpg" alt="Etapa 3: viviendas y calles" data-e="3" loading="lazy" class="ver">
       </div>
       <ol class="pasos-etapa" role="group" aria-label="Etapas">
@@ -346,7 +352,24 @@
         <input type="range" min="0" max="100" value="50" aria-label="Comparar hoy con el proyecto">
         <span class="m i">Hoy</span><span class="m d">Con el proyecto</span>
       </div>
-      <div class="leyenda"><span><i style="background:#e4573d"></i>Plaza comercial</span><span><i style="background:#f0b43c"></i>Mixtos</span><span><i style="background:#4f8fe8"></i>Residencial</span></div>
+      <img src="assets/terreno/propuesta2-plano.png" alt="Plano de la propuesta 2 con las medidas de la plaza comercial: 182.96 m al este, 122.14 m al sur, 144.15 m al oeste y 128.26 m al norte" loading="lazy" style="width:100%;max-width:560px;display:block;margin:16px auto 0;border-radius:12px;background:#fff">
+      <div class="leyenda"><span><i style="background:#f2c230"></i>Plaza comercial</span><span><i style="background:#d64541"></i>Solares de comercio</span><span><i style="background:#c2409d"></i>Villas</span><span><i style="background:#4f8fe8"></i>Residencial</span><span><i style="background:#3c9d4e"></i>Área verde</span><span><i style="background:#5b8c5a"></i>Reserva natural</span></div>
+    </div>
+  </section>
+
+  <section id="vistas">
+    <div class="envoltura">
+      <div class="etiqueta">La propuesta 2</div>
+      <h2>Cómo se vería por dentro</h2>
+      <p class="sub">Calles, marginal frente a los solares de comercio, aceras y plaza comercial. Render conceptual ilustrativo: casas, coches, farolas y árboles son de ejemplo y no constituyen plano catastral ni proyecto aprobado.</p>
+      <div class="galeria" data-verify-unit="vistas">
+        <figure><img src="assets/vistas/v5-general-alto.jpg" alt="Vista general de la propuesta 2 desde el aire" loading="lazy"><figcaption>Vista general</figcaption></figure>
+        <figure><img src="assets/vistas/v6-dron-lateral-plaza.jpg" alt="La plaza comercial vista desde un dron" loading="lazy"><figcaption>Plaza comercial: 20,000 m²</figcaption></figure>
+        <figure><img src="assets/vistas/v4-plaza-desde-la-marginal.jpg" alt="Marginal frente a los solares de comercio" loading="lazy"><figcaption>La marginal frente a los solares de comercio</figcaption></figure>
+        <figure><img src="assets/vistas/v1-marginal-peaton.jpg" alt="La marginal vista a pie" loading="lazy"><figcaption>La marginal, a pie</figcaption></figure>
+        <figure><img src="assets/vistas/v3-calle-residencial-peaton.jpg" alt="Calle residencial vista a pie" loading="lazy"><figcaption>Calle residencial</figcaption></figure>
+        <figure><img src="assets/vistas/v2-calle-oeste-dron-bajo.jpg" alt="Calle residencial desde un dron bajo" loading="lazy"><figcaption>Las calles y las casas desde el aire</figcaption></figure>
+      </div>
     </div>
   </section>
 
@@ -378,9 +401,11 @@
       <h2>Aquí iría la información de los solares</h2>
       <p class="sub">Número, área, precio y disponibilidad de cada solar, con su ficha.</p>
       <div class="fichas" data-verify-unit="fichas">
-        <div class="ficha"><div class="foto">foto o plano</div><b>Solar comercial</b><span>21,727 m² · precio y condiciones</span><div class="raya c"></div></div>
-        <div class="ficha"><div class="foto">foto o plano</div><b>Solares mixtos</b><span>26 de 1,220 m² · precio y condiciones</span><div class="raya c"></div></div>
-        <div class="ficha"><div class="foto">foto o plano</div><b>Solares residenciales</b><span>99 de 342 a 455 m² · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Plaza comercial</b><span>20,000 m² · 182.96 × 122.14 × 144.15 × 128.26 m · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Solares de comercio</b><span>13 de hasta 1,220 m² (14,926 m² en total) · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Solares residenciales</b><span>120 de unos 300 m² (36,073 m² en total) · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Villas</b><span>20 de unos 1,000 m² (19,974 m² en total) · precio y condiciones</span><div class="raya c"></div></div>
+        <div class="ficha"><div class="foto">foto o plano</div><b>Área verde y reserva</b><span>5,534 m² de área verde y 3,965 m² de reserva natural</span><div class="raya c"></div></div>
       </div>
     </div>
   </section>
