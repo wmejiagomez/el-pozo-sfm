@@ -1,0 +1,46 @@
+# Despliegue del sitio de El Pozo a GitHub Pages.
+# Al hacer push a main se sube el sitio como artefacto y se despliega en el entorno «github-pages».
+# Werner lo aprueba en GitHub (revisor obligatorio del entorno) antes de que salga: se configura aparte.
+#
+# Acciones fijadas por SHA de commit, no por etiqueta (comprobado con `git ls-remote` el 30/09/2026):
+#   actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1               -> v7.0.1
+#   actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  -> v5.0.0
+#   actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346           -> v5.0.1
+# Para actualizar una: mirar la etiqueta nueva, copiar su SHA completo y cambiar esta nota y la línea `uses`.
+name: Publicar el sitio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un solo despliegue a la vez; uno nuevo no cancela a uno que ya está en marcha.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - name: Traer el repositorio
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Subir el sitio (la raíz, sin archivos ocultos)
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: .
+
+      - name: Desplegar en GitHub Pages
+        id: despliegue
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
